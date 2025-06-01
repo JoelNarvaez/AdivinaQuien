@@ -12,7 +12,6 @@ public class JFramePresentacion extends javax.swing.JFrame {
     
     private JFrameGameScreen gamescreen;
     private JFrameInstrucciones instruccion;
-    private JFrameInformacion informacion;
     private JFrameCreditos creditos;
 
     public void setGamescreen(JFrameGameScreen gamescreen) {
@@ -23,9 +22,8 @@ public class JFramePresentacion extends javax.swing.JFrame {
         this.instruccion = instruccion;
     }
 
-    public void setInformacion(JFrameInformacion informacion) {
-        this.informacion = informacion;
-    }
+    
+    
 
     public void setCreditos(JFrameCreditos creditos) {
         this.creditos = creditos;
@@ -160,12 +158,7 @@ public class JFramePresentacion extends javax.swing.JFrame {
 
     private void jButtonInformacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInformacionActionPerformed
         // TODO add your handling code here:
-        if (informacion == null) {
-            informacion = new JFrameInformacion();
-            informacion.setPresentacion(this);
-        }
-        informacion.setVisible(true);
-        this.setVisible(false);
+        
     }//GEN-LAST:event_jButtonInformacionActionPerformed
 
     /**
