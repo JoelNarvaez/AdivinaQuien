@@ -16,11 +16,12 @@ import java.awt.*;
 import java.util.List;
 import pantallas.ConexionBD;
 
-public class InterfazJugadores extends JFrame {
-    public InterfazJugadores() {
+public class BaseDeDatos extends JFrame {
+    public BaseDeDatos() {
         setTitle("Base de datos de jugadores");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Pantalla completa
         setLocationRelativeTo(null);
 
         JPanel panel = new JPanel();
@@ -38,7 +39,6 @@ public class InterfazJugadores extends JFrame {
 
         int contador = 1;
         for (Jugador j : jugadores) {
-            System.out.println("Cargando jugador: " + j.getNickname());
             panel.add(Box.createRigidArea(new Dimension(0, 10))); // 20 píxeles de espacio vertica
             panel.add(crearPanelJugador(j, contador));
             panel.add(Box.createRigidArea(new Dimension(0, 20))); // 20 píxeles de espacio vertical
@@ -138,7 +138,7 @@ public class InterfazJugadores extends JFrame {
  
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new InterfazJugadores().setVisible(true);
+            new BaseDeDatos().setVisible(true);
         });
     }
 }
