@@ -4,26 +4,134 @@
  */
 package pantallas;
 
-/**
- *
- * @author marie
- */
+import javax.swing.*;
+import java.awt.*;
+
+
 public class JFrameGameScreen extends javax.swing.JFrame {
     
-    private JFramePresentacion presentacion;
-    private JFrameFelicitacion felicitacion;
-    private JFrameAnimo animo;
+    private JButton[] personajeButtons = new JButton[24];
 
-    public void setPresentacion(JFramePresentacion presentacion) {
-        this.presentacion = presentacion;
-    }
-
-    /**
-     * Creates new form JFrameGameScreen
-     */
     public JFrameGameScreen() {
-        initComponents();
-        this.setLocationRelativeTo(null);
+        setTitle("Adivina Quién");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Pantalla completa
+
+        // Colores 
+        Color fondoPrincipal = new Color(245, 245, 255);
+        Color fondoSecundario = new Color(200, 220, 255);
+        Color colorBoton = new Color(180, 200, 255);
+        
+        // Layout principal
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        mainPanel.setBackground(fondoPrincipal);
+
+        // Panel superior
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(fondoPrincipal);
+
+        JPanel leftTopPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        leftTopPanel.setBackground(fondoPrincipal);
+        JButton salirBtn = new JButton("Salir");
+        leftTopPanel.add(salirBtn);
+        
+        JPanel centerTopPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        centerTopPanel.setBackground(fondoPrincipal);
+        centerTopPanel.setPreferredSize(new Dimension(650, 40));
+
+        JComboBox<String> personajeCombo = new JComboBox<>(new String[]{"Elsa", "Aladdin", "Valiente", "Elastigirl"});
+        JButton adivinarBtn = new JButton("Adivinar");
+        centerTopPanel.add(personajeCombo);
+        centerTopPanel.add(adivinarBtn);
+
+        topPanel.add(leftTopPanel, BorderLayout.WEST);
+        topPanel.add(centerTopPanel, BorderLayout.CENTER);
+
+        
+        // Panel personajes
+        JPanel personajesPanel = new JPanel(new GridLayout(4, 6, 10, 10));
+        personajesPanel.setBackground(fondoSecundario);
+        for (int i = 0; i < 24; i++) {
+            personajeButtons[i] = new JButton("?");
+            personajeButtons[i].setPreferredSize(new Dimension(100, 100));
+            personajeButtons[i].setBackground(colorBoton);
+            personajesPanel.add(personajeButtons[i]);
+        }
+
+        // Panel derecho
+        JPanel rightPanel = new JPanel();
+        rightPanel.setLayout(new BorderLayout());
+        rightPanel.setPreferredSize(new Dimension(300, 0));
+        
+        
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+        infoPanel.setBackground(fondoSecundario);
+
+        JLabel nicknameLabel = new JLabel("Nickname: eluyuyuy");
+        JLabel turnoLabel = new JLabel("Es tu turno");
+        JLabel personajeLabel = new JLabel("Eres: Elastigirl");
+        nicknameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        turnoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        personajeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel personajeImagen = new JLabel();
+        personajeImagen.setPreferredSize(new Dimension(200, 200));
+        personajeImagen.setMaximumSize(new Dimension(200, 200));
+        personajeImagen.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        personajeImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        infoPanel.add(Box.createVerticalStrut(10));
+        infoPanel.add(nicknameLabel);
+        infoPanel.add(turnoLabel);
+        infoPanel.add(personajeLabel);
+        infoPanel.add(Box.createVerticalStrut(10));
+        infoPanel.add(personajeImagen);
+        
+        
+        JPanel chatPanel = new JPanel();
+        chatPanel.setLayout(new BorderLayout(5, 5));
+        chatPanel.setBackground(fondoSecundario);
+
+        JTextArea chatArea = new JTextArea();
+        chatArea.setEditable(false);
+        JScrollPane chatScroll = new JScrollPane(chatArea);
+
+        JPanel inputGroup = new JPanel();
+        inputGroup.setLayout(new BorderLayout(5, 5));
+
+        JTextField chatInput = new JTextField();
+        JButton enviarBtn = new JButton("Enviar");
+
+        inputGroup.add(chatInput, BorderLayout.CENTER);
+        inputGroup.add(enviarBtn, BorderLayout.EAST);
+
+        chatPanel.add(chatScroll, BorderLayout.CENTER);
+        chatPanel.add(inputGroup, BorderLayout.SOUTH);
+
+        JPanel infoYChatPanel = new JPanel();
+        infoYChatPanel.setLayout(new BorderLayout(10, 10));
+        infoYChatPanel.setBackground(fondoSecundario);
+        infoYChatPanel.add(infoPanel, BorderLayout.NORTH);
+        infoYChatPanel.add(chatPanel, BorderLayout.CENTER);
+
+        rightPanel.add(infoYChatPanel, BorderLayout.CENTER);
+
+        // Panel inferior
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        bottomPanel.setBackground(fondoPrincipal);
+        bottomPanel.add(new JButton("Presentación"));
+        bottomPanel.add(new JButton("Felicitación"));
+        bottomPanel.add(new JButton("Ánimo"));
+
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(personajesPanel, BorderLayout.CENTER);
+        mainPanel.add(rightPanel, BorderLayout.EAST);
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+
+        add(mainPanel);
+        setVisible(true);
     }
 
     /**
@@ -36,141 +144,37 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabelGameScreen = new javax.swing.JLabel();
-        jButtonPresentacion = new javax.swing.JButton();
-        jButtonFelicitacion = new javax.swing.JButton();
-        jButtonAnimo = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabelGameScreen.setFont(new java.awt.Font("Bahnschrift", 0, 36)); // NOI18N
         jLabelGameScreen.setText("Pantalla de Juego");
 
-        jButtonPresentacion.setText("Presentacion");
-        jButtonPresentacion.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonPresentacionActionPerformed(evt);
-            }
-        });
-
-        jButtonFelicitacion.setText("Felicitacion");
-        jButtonFelicitacion.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonFelicitacionActionPerformed(evt);
-            }
-        });
-
-        jButtonAnimo.setText("Animo");
-        jButtonAnimo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonAnimoActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(236, 236, 236)
-                        .addComponent(jLabelGameScreen, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(340, 340, 340)
-                        .addComponent(jButtonPresentacion))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(187, 187, 187)
-                        .addComponent(jButtonFelicitacion)
-                        .addGap(208, 208, 208)
-                        .addComponent(jButtonAnimo)))
-                .addContainerGap(253, Short.MAX_VALUE))
+                .addGap(236, 236, 236)
+                .addComponent(jLabelGameScreen, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(276, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(46, 46, 46)
                 .addComponent(jLabelGameScreen)
-                .addGap(92, 92, 92)
-                .addComponent(jButtonPresentacion)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonFelicitacion)
-                    .addComponent(jButtonAnimo))
-                .addGap(172, 172, 172))
+                .addContainerGap(400, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonPresentacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPresentacionActionPerformed
-        // TODO add your handling code here:
-        presentacion.setVisible(true);
-        this.setVisible(false);
-        
-    }//GEN-LAST:event_jButtonPresentacionActionPerformed
-
-    private void jButtonFelicitacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFelicitacionActionPerformed
-        // TODO add your handling code here:
-        if (felicitacion == null) {
-            felicitacion = new JFrameFelicitacion();
-            felicitacion.setGamescreen(this);
-        }
-        felicitacion.setVisible(true);
-        this.setVisible(false);
-    }//GEN-LAST:event_jButtonFelicitacionActionPerformed
-
-    private void jButtonAnimoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAnimoActionPerformed
-        // TODO add your handling code here:
-        if (animo == null) {
-            animo = new JFrameAnimo();
-            animo.setGamescreen(this);
-        }
-        animo.setVisible(true);
-        this.setVisible(false);
-    }//GEN-LAST:event_jButtonAnimoActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    
-    
-    
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(JFrameGameScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(JFrameGameScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(JFrameGameScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(JFrameGameScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-               // new JFrameGameScreen().setVisible(true);
-            }
-        });
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new JFrameGameScreen());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonAnimo;
-    private javax.swing.JButton jButtonFelicitacion;
-    private javax.swing.JButton jButtonPresentacion;
     private javax.swing.JLabel jLabelGameScreen;
     // End of variables declaration//GEN-END:variables
 }

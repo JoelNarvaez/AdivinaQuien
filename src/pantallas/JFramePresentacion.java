@@ -132,7 +132,7 @@ public class JFramePresentacion extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (gamescreen == null) {
             gamescreen = new JFrameGameScreen();
-            gamescreen.setPresentacion(this);
+            //gamescreen.setPresentacion(this);
         }
         gamescreen.setVisible(true);
         this.setVisible(false);
