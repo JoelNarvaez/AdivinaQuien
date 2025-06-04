@@ -4,6 +4,8 @@
  */
 package pantallas;
 
+import javax.swing.JFrame;
+
 /**
  *
  * @author marie
@@ -35,6 +37,7 @@ public class JFramePresentacion extends javax.swing.JFrame {
      */
     public JFramePresentacion() {
         initComponents();
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Pantalla completa
         this.setLocationRelativeTo(null);
     }
 
@@ -52,11 +55,18 @@ public class JFramePresentacion extends javax.swing.JFrame {
         jButtonInstruccion = new javax.swing.JButton();
         jButtonCredito = new javax.swing.JButton();
         jButtonInformacion = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setSize(new java.awt.Dimension(1920, 1080));
+        getContentPane().setLayout(null);
 
-        jLabelPortada.setFont(new java.awt.Font("Bahnschrift", 0, 24)); // NOI18N
-        jLabelPortada.setText("Presentacion");
+        jLabelPortada.setFont(new java.awt.Font("Centaur", 1, 150)); // NOI18N
+        jLabelPortada.setText("¿ A D I V I N A ");
+        getContentPane().add(jLabelPortada);
+        jLabelPortada.setBounds(450, 210, 2506, 172);
 
         jButtonIrJuego.setText("Ir a pantalla de juego");
         jButtonIrJuego.addActionListener(new java.awt.event.ActionListener() {
@@ -64,6 +74,8 @@ public class JFramePresentacion extends javax.swing.JFrame {
                 jButtonIrJuegoActionPerformed(evt);
             }
         });
+        getContentPane().add(jButtonIrJuego);
+        jButtonIrJuego.setBounds(830, 700, 140, 23);
 
         jButtonInstruccion.setText("Instruccion");
         jButtonInstruccion.addActionListener(new java.awt.event.ActionListener() {
@@ -71,6 +83,8 @@ public class JFramePresentacion extends javax.swing.JFrame {
                 jButtonInstruccionActionPerformed(evt);
             }
         });
+        getContentPane().add(jButtonInstruccion);
+        jButtonInstruccion.setBounds(610, 710, 89, 23);
 
         jButtonCredito.setText("Credito");
         jButtonCredito.addActionListener(new java.awt.event.ActionListener() {
@@ -78,6 +92,8 @@ public class JFramePresentacion extends javax.swing.JFrame {
                 jButtonCreditoActionPerformed(evt);
             }
         });
+        getContentPane().add(jButtonCredito);
+        jButtonCredito.setBounds(890, 790, 72, 23);
 
         jButtonInformacion.setText("Informacion");
         jButtonInformacion.addActionListener(new java.awt.event.ActionListener() {
@@ -85,43 +101,33 @@ public class JFramePresentacion extends javax.swing.JFrame {
                 jButtonInformacionActionPerformed(evt);
             }
         });
+        getContentPane().add(jButtonInformacion);
+        jButtonInformacion.setBounds(1180, 700, 95, 23);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(313, 313, 313)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButtonIrJuego)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabelPortada)
-                                .addGap(23, 23, 23))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(187, 187, 187)
-                        .addComponent(jButtonInstruccion)
-                        .addGap(85, 85, 85)
-                        .addComponent(jButtonCredito)
-                        .addGap(85, 85, 85)
-                        .addComponent(jButtonInformacion)))
-                .addContainerGap(145, Short.MAX_VALUE))
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/lamparaPixar.gif"))); // NOI18N
+        getContentPane().add(jLabel1);
+        jLabel1.setBounds(730, 310, 482, 331);
+
+        jLabel2.setFont(new java.awt.Font("Centaur", 1, 150)); // NOI18N
+        jLabel2.setText("Q U   É N ?");
+        getContentPane().add(jLabel2);
+        jLabel2.setBounds(650, 410, 706, 252);
+
+        jPanel1.setBackground(new java.awt.Color(204, 204, 255));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1960, Short.MAX_VALUE)
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addComponent(jLabelPortada)
-                .addGap(70, 70, 70)
-                .addComponent(jButtonIrJuego)
-                .addGap(113, 113, 113)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonInstruccion)
-                    .addComponent(jButtonCredito)
-                    .addComponent(jButtonInformacion))
-                .addContainerGap(205, Short.MAX_VALUE))
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1030, Short.MAX_VALUE)
         );
+
+        getContentPane().add(jPanel1);
+        jPanel1.setBounds(-10, -10, 1960, 1030);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -202,6 +208,9 @@ public class JFramePresentacion extends javax.swing.JFrame {
     private javax.swing.JButton jButtonInformacion;
     private javax.swing.JButton jButtonInstruccion;
     private javax.swing.JButton jButtonIrJuego;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabelPortada;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
