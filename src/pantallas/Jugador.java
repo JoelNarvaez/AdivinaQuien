@@ -124,6 +124,16 @@ public class Jugador {
         this.ranking = ranking;
     }
 
+    public Jugador(String nickname, String profileIcon, int edad) {
+        this.nickname = nickname;
+        this.profileIcon = profileIcon;
+        this.edad = edad;
+    }
+
+    public Jugador() {
+    }
+    
+    
    
     
     
