@@ -20,7 +20,7 @@ import java.sql.SQLException;
 public class ConexionBD {
     public static Connection conectar() {
         try {
-            String url = "jdbc:mysql://localhost:3306/juego_adivina";
+            String url = "jdbc:mysql://localhost:3306/adivina_quien";
             String user = "root";
             String password = "";
             return DriverManager.getConnection(url, user, password);
@@ -32,31 +32,53 @@ public class ConexionBD {
 
     // Insertar un jugador
     public static boolean insertarJugador(Jugador j) {
-        String sql = "INSERT INTO jugadores (nombre_jugador, profile, victorias, derrotas, edad, personaje_adivinado, tiempo_juego, intentos, fecha_partida, jugador_vs, ranking) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO jugadores " +
+            "(nombre_jugador, profile, victorias, derrotas, edad, personaje_adivinado, tiempo_juego, intentos, fecha_partida, jugador_vs, ranking) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = conectar();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    try (Connection conn = conectar();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, j.getNickname());
-            stmt.setString(2, j.getProfileIcon());
-            stmt.setInt(3, j.getVictorias());
-            stmt.setInt(4, j.getDerrotas());
-            stmt.setInt(5, j.getEdad());
+        // Campos obligatorios
+        stmt.setString(1, j.getNickname());
+        stmt.setString(2, j.getProfileIcon());
+        stmt.setInt(3, j.getVictorias()); // 0 por defecto si no se asigna
+        stmt.setInt(4, j.getDerrotas());  // 0 por defecto si no se asigna
+        stmt.setInt(5, j.getEdad());
+
+        // Campos opcionales: revisa nulos antes de asignar
+        if (j.getPersonajeAdivinado() != null)
             stmt.setString(6, j.getPersonajeAdivinado());
+        else
+            stmt.setNull(6, java.sql.Types.VARCHAR);
+
+        if (j.getTiempo() != null)
             stmt.setTime(7, j.getTiempo());
-            stmt.setInt(8, j.getIntentos());
+        else
+            stmt.setNull(7, java.sql.Types.TIME);
+
+        stmt.setInt(8, j.getIntentos()); // 0 si no se asigna
+
+        if (j.getFechaPartida() != null)
             stmt.setDate(9, new java.sql.Date(j.getFechaPartida().getTime()));
+        else
+            stmt.setNull(9, java.sql.Types.DATE);
+
+        if (j.getJugadorVS() != null)
             stmt.setString(10, j.getJugadorVS());
-            stmt.setInt(11, j.getRanking());
+        else
+            stmt.setNull(10, java.sql.Types.VARCHAR);
 
-            return stmt.executeUpdate() > 0;
+        stmt.setInt(11, j.getRanking()); // 0 si no se asigna
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        return stmt.executeUpdate() > 0;
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
     }
+}
+
 
     // Obtener todos los jugadores
     public static List<Jugador> obtenerJugadores() {
@@ -96,6 +118,25 @@ public class ConexionBD {
             e.printStackTrace();
         }
 
+        return null;
+    }
+    
+    public static Jugador buscarPorNombre(String nickname) {
+        String sql = "SELECT * FROM jugadores WHERE nombre_jugador = ?";
+
+        try (Connection conn = conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, nickname);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return mapearJugador(rs);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
