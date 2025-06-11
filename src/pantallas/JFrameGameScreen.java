@@ -6,16 +6,43 @@ package pantallas;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.Timer;
+
 
 
 public class JFrameGameScreen extends javax.swing.JFrame {
-    
+    private JLabel fechaHoraLabel;
     private JButton[] personajeButtons = new JButton[24];
+    private JLabel cronometroLabel;
+    private int crono = 0;
+
 
     public JFrameGameScreen() {
         setTitle("Adivina Quién");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH); // Pantalla completa
+        
+        // Inicializar etiqueta de fecha y hora
+        fechaHoraLabel = new JLabel();
+        fechaHoraLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        fechaHoraLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        actualizarFechaHora(); // Muestra la hora inicial
+
+        // Timer para actualizar hora cada segundo
+        Timer timer = new Timer(1000, e -> actualizarFechaHora());
+        timer.start();
+        
+        // Inicializar etiqueta de cronómetro
+        cronometroLabel = new JLabel("Cronómetro: 00:00");
+        cronometroLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        cronometroLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        // Timer para el cronómetro
+        Timer cronometroTimer = new Timer(1000, e -> actualizarCronometro());
+        cronometroTimer.start();
+
 
         // Colores 
         Color fondoPrincipal = new Color(245, 245, 255);
@@ -30,25 +57,38 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         // Panel superior
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(fondoPrincipal);
+        // Panel de la derecha para la hora
+        JPanel rightTopPanel = new JPanel();
+        rightTopPanel.setLayout(new BoxLayout(rightTopPanel, BoxLayout.Y_AXIS));
+        rightTopPanel.setBackground(fondoPrincipal);
+        rightTopPanel.add(fechaHoraLabel);
+        rightTopPanel.add(cronometroLabel);
+
+        topPanel.add(rightTopPanel, BorderLayout.EAST);
+
 
         JPanel leftTopPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         leftTopPanel.setBackground(fondoPrincipal);
         JButton salirBtn = new JButton("Salir");
         leftTopPanel.add(salirBtn);
         
-        JPanel centerTopPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        centerTopPanel.setBackground(fondoPrincipal);
-        centerTopPanel.setPreferredSize(new Dimension(650, 40));
-
+        JPanel adivinarPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        adivinarPanel.setBackground(fondoPrincipal);
         JComboBox<String> personajeCombo = new JComboBox<>(new String[]{"Elsa", "Aladdin", "Valiente", "Elastigirl"});
         JButton adivinarBtn = new JButton("Adivinar");
-        centerTopPanel.add(personajeCombo);
-        centerTopPanel.add(adivinarBtn);
+        adivinarPanel.add(personajeCombo);
+        adivinarPanel.add(adivinarBtn);
 
-        topPanel.add(leftTopPanel, BorderLayout.WEST);
-        topPanel.add(centerTopPanel, BorderLayout.CENTER);
+        // Contenedor vertical: adivinarPanel arriba, personajesPanel abajo
+        JPanel centroContenedor = new JPanel();
+        centroContenedor.setLayout(new BorderLayout());
+        centroContenedor.setBackground(fondoPrincipal);
 
+        mainPanel.add(centroContenedor, BorderLayout.CENTER);
         
+        topPanel.add(leftTopPanel, BorderLayout.WEST);
+        topPanel.add(leftTopPanel, BorderLayout.WEST);
+      
         // Panel personajes
         JPanel personajesPanel = new JPanel(new GridLayout(4, 6, 10, 10));
         personajesPanel.setBackground(fondoSecundario);
@@ -58,6 +98,9 @@ public class JFrameGameScreen extends javax.swing.JFrame {
             personajeButtons[i].setBackground(colorBoton);
             personajesPanel.add(personajeButtons[i]);
         }
+        
+        centroContenedor.add(adivinarPanel, BorderLayout.NORTH);  // Parte superior del centro
+        centroContenedor.add(personajesPanel, BorderLayout.CENTER); // Tablero de personajes
 
         // Panel derecho
         JPanel rightPanel = new JPanel();
@@ -94,6 +137,16 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         chatPanel.setLayout(new BorderLayout(5, 5));
         chatPanel.setBackground(fondoSecundario);
 
+        // NUEVO: ComboBox con lista de preguntas
+        JComboBox<String> preguntasComboBox = new JComboBox<>(new String[]{
+            "¿Tu personaje tiene gafas?",
+            "¿Es mujer?",
+            "¿Tiene sombrero?",
+            "¿Es rubio?",
+            "¿Lleva accesorios?"
+        });
+        chatPanel.add(preguntasComboBox, BorderLayout.NORTH); // Lo añadimos arriba del área de chat
+
         JTextArea chatArea = new JTextArea();
         chatArea.setEditable(false);
         JScrollPane chatScroll = new JScrollPane(chatArea);
@@ -108,7 +161,25 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         inputGroup.add(enviarBtn, BorderLayout.EAST);
 
         chatPanel.add(chatScroll, BorderLayout.CENTER);
-        chatPanel.add(inputGroup, BorderLayout.SOUTH);
+
+        // NUEVO panel debajo del input con botones "Sí" y "No"
+        JPanel respuestaPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton siBtn = new JButton("Sí");
+        JButton noBtn = new JButton("No");
+        respuestaPanel.add(siBtn);
+        respuestaPanel.add(noBtn);
+
+        JPanel inputYRespuestaPanel = new JPanel();
+        inputYRespuestaPanel.setLayout(new BoxLayout(inputYRespuestaPanel, BoxLayout.Y_AXIS));
+        
+        inputGroup.setMaximumSize(new Dimension(Integer.MAX_VALUE, inputGroup.getPreferredSize().height));
+        respuestaPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, respuestaPanel.getPreferredSize().height));
+
+        inputYRespuestaPanel.add(inputGroup);
+        inputYRespuestaPanel.add(respuestaPanel);
+        
+        chatPanel.add(inputYRespuestaPanel, BorderLayout.SOUTH);
+
 
         JPanel infoYChatPanel = new JPanel();
         infoYChatPanel.setLayout(new BorderLayout(10, 10));
@@ -118,17 +189,8 @@ public class JFrameGameScreen extends javax.swing.JFrame {
 
         rightPanel.add(infoYChatPanel, BorderLayout.CENTER);
 
-        // Panel inferior
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        bottomPanel.setBackground(fondoPrincipal);
-        bottomPanel.add(new JButton("Presentación"));
-        bottomPanel.add(new JButton("Felicitación"));
-        bottomPanel.add(new JButton("Ánimo"));
-
         mainPanel.add(topPanel, BorderLayout.NORTH);
-        mainPanel.add(personajesPanel, BorderLayout.CENTER);
         mainPanel.add(rightPanel, BorderLayout.EAST);
-        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
         setVisible(true);
@@ -169,6 +231,20 @@ public class JFrameGameScreen extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    private void actualizarFechaHora() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String fechaHoraActual = sdf.format(new Date());
+        fechaHoraLabel.setText(fechaHoraActual);
+    }
+    
+    private void actualizarCronometro() {
+    crono++;
+    int minutos = crono / 60;
+    int segundos = crono % 60;
+    String tiempo = String.format("Tiempo: %02d:%02d", minutos, segundos);
+    cronometroLabel.setText(tiempo);
+}
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new JFrameGameScreen());
