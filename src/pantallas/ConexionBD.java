@@ -4,6 +4,7 @@
  */
 package pantallas;
 
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -12,18 +13,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  *
  * @author Joel
  */
 public class ConexionBD {
+    private static final String URL = "jdbc:mysql://localhost:3306/adivina_quien";
+    private static final String USER = "root";
+    private static final String PASSWORD = "";
+
     public static Connection conectar() {
         try {
-            String url = "jdbc:mysql://localhost:3306/adivina_quien";
-            String user = "root";
-            String password = "";
-            return DriverManager.getConnection(url, user, password);
+            return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -78,7 +81,6 @@ public class ConexionBD {
         return false;
     }
 }
-
 
     // Obtener todos los jugadores
     public static List<Jugador> obtenerJugadores() {
@@ -183,6 +185,20 @@ public class ConexionBD {
             return false;
         }
     }
+    
+      public static List<String> obtenerPreguntasActivas() {
+    List<String> preguntas = new ArrayList<>();
+    String sql = "SELECT pregunta FROM preguntas_adivinaquien WHERE activa=1 ORDER BY pregunta";
+    try (Connection con = conectar();
+         Statement st = con.createStatement();
+         ResultSet rs = st.executeQuery(sql)) {
+        while (rs.next())
+            preguntas.add(rs.getString("pregunta"));
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return preguntas;
+}
 
     // Método auxiliar para mapear un ResultSet a un objeto Jugador
     private static Jugador mapearJugador(ResultSet rs) throws SQLException {
