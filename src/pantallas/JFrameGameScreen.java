@@ -190,7 +190,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
 
 
    comboPersonajes.addActionListener(e -> {
-   PersonajeDisney seleccionado = (PersonajeDisney) comboPersonajes.getSelectedItem();
+    PersonajeDisney seleccionado = (PersonajeDisney) comboPersonajes.getSelectedItem();
     mostrarImagenSeleccionada(seleccionado, lblImagenCombo, 250, 250);
     mostrarImagenSeleccionada(seleccionado, personajeImagen, 200, 200);
     personajeLabel.setText("Eres: " + seleccionado.getNombre());
