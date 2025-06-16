@@ -237,7 +237,7 @@ private PanelCover panelCover; // Agrega esta variable
     jugarBtn.addActionListener(e -> {
         String nickname = nicknameField.getText().trim();
         jugador = ConexionBD.buscarPorNombre(nickname);
-        JFrameGameScreen gameScreen = new JFrameGameScreen(jugador);
+        JFrameGameScreen gameScreen = new JFrameGameScreen(jugador);// Aqui probablemente cambiar la llamada
         gameScreen.setVisible(true);
         Window window = SwingUtilities.getWindowAncestor(this);
         if (window != null) window.dispose();
@@ -320,7 +320,7 @@ private void updateAvatars() {
                 "Bienvenido",
                 JOptionPane.INFORMATION_MESSAGE
             );
-            JFrameGameScreen gameScreen = new JFrameGameScreen(jugador);
+            JFrameGameScreen gameScreen = new JFrameGameScreen(jugador); // Aqui probablemente cambiar la llamada
             gameScreen.setVisible(true);
             Window window = SwingUtilities.getWindowAncestor(this);
             if (window != null) window.dispose();
