@@ -4,6 +4,7 @@
  */
 package pantallas;
 
+import java.io.Serializable; // ← IMPORTANTE
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,9 +15,12 @@ import java.util.Set;
 
 /**
  *
- * @author Joel
+ * @author Joel y lore
  */
-public class PersonajeDisney {
+
+public class PersonajeDisney implements Serializable {
+    private static final long serialVersionUID = 1L; // ← Recomendado para clases serializables
+    
     private String nombre;
     private String rutaImagen;
 
