@@ -17,17 +17,19 @@ public class Cliente {
     private ObjectInputStream in;
 
     public boolean conectar(String host, int puerto, Jugador jugador) {
-        try {
-            socket = new Socket(host, puerto);
-            out = new ObjectOutputStream(socket.getOutputStream());
-            in = new ObjectInputStream(socket.getInputStream());
-            out.writeObject(jugador);  // Enviamos el objeto Jugador al servidor
-            out.flush();
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
+    try {
+        socket = new Socket(host, puerto);
+        out = new ObjectOutputStream(socket.getOutputStream());
+        out.writeObject(jugador);  // Enviamos el objeto Jugador al servidor
+        out.flush();
+        socket.close(); // <- Cierra conexión después de enviar
+        System.out.println("Jugador enviado: " + jugador.getNickname());
+        return true;
+    } catch (IOException e) {
+        e.printStackTrace(); // <-- importante para ver el error real
+        return false;
     }
+}
 
     public void cerrarConexion() {
         try {
