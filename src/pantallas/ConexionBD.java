@@ -29,6 +29,27 @@ public class ConexionBD {
             return null;
         }
     }
+    
+    // Imagen de perfil del jugador
+    public static String obtenerProfilePorNombre(String nickname) {
+    String sql = "SELECT profile FROM jugadores WHERE nombre_jugador = ?";
+
+    try (Connection conn = conectar();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setString(1, nickname);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            return rs.getString("profile");
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return null; // Retorna null si no se encontró el jugador o si hubo error
+}
 
     // Insertar un jugador
     public static boolean insertarJugador(Jugador j) {
@@ -167,35 +188,122 @@ public class ConexionBD {
         }
     }
 
-    // Eliminar jugador por ID
-    public static boolean eliminarJugador(int id) {
-        String sql = "DELETE FROM jugadores WHERE id = ?";
+    
+    public static List<String> obtenerPreguntasActivas() {
+        List<String> preguntas = new ArrayList<>();
+        String sql = "SELECT pregunta FROM preguntas_adivinaquien WHERE activa=1 ORDER BY pregunta";
+        try (Connection con = conectar();
+             Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next())
+                preguntas.add(rs.getString("pregunta"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return preguntas;
+    }
+    
+    // Metodo para insertar datos de una partida
+     public static boolean insertarPartida(Partida partida) {
+        String sql = "INSERT INTO partidas (jugador1, jugador2, ganador, personaje_ganador, fecha, duracion) VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = conectar();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, id);
-            return stmt.executeUpdate() > 0;
-
-        } catch (Exception e) {
+        try (Connection conn = conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, partida.getJugador1());
+            ps.setString(2, partida.getJugador2());
+            ps.setString(3, partida.getGanador());
+            ps.setString(4, partida.getPersonajeGanador());
+            ps.setDate(5, partida.getFecha());
+            ps.setTime(6, partida.getDuracion());
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
     
-      public static List<String> obtenerPreguntasActivas() {
-    List<String> preguntas = new ArrayList<>();
-    String sql = "SELECT pregunta FROM preguntas_adivinaquien WHERE activa=1 ORDER BY pregunta";
-    try (Connection con = conectar();
-         Statement st = con.createStatement();
-         ResultSet rs = st.executeQuery(sql)) {
-        while (rs.next())
-            preguntas.add(rs.getString("pregunta"));
-    } catch (SQLException e) {
-        e.printStackTrace();
+    //Metdodo para ordenar las partidas por duracion
+   public static List<Partida> obtenerPartidasOrdenadasPorDuracion() {
+        List<Partida> lista = new ArrayList<>();
+        String sql = "SELECT * FROM partidas ORDER BY duracion ASC";
+
+        try (Connection conn = conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Partida partida = new Partida();
+                partida.setId(rs.getInt("id"));
+                partida.setJugador1(rs.getString("jugador1"));
+                partida.setJugador2(rs.getString("jugador2"));
+                partida.setGanador(rs.getString("ganador"));
+                partida.setPersonajeGanador(rs.getString("personaje_ganador"));
+                partida.setFecha(rs.getDate("fecha"));
+                partida.setDuracion(rs.getTime("duracion"));
+                lista.add(partida);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lista;
     }
-    return preguntas;
-}
+
+    
+    //metdodo para que me muestre todas las partidas donde aparece el nombre de un jugador
+    public static List<Partida> obtenerPartidasPorJugador(String nombreJugador) {
+        List<Partida> lista = new ArrayList<>();
+        String sql = "SELECT * FROM partidas WHERE jugador1 = ? OR jugador2 = ?";
+
+        try (Connection conn = conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nombreJugador);
+            ps.setString(2, nombreJugador);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Partida partida = new Partida();
+                partida.setId(rs.getInt("id"));
+                partida.setJugador1(rs.getString("jugador1"));
+                partida.setJugador2(rs.getString("jugador2"));
+                partida.setGanador(rs.getString("ganador"));
+                partida.setPersonajeGanador(rs.getString("personaje_ganador"));
+                partida.setFecha(rs.getDate("fecha"));
+                partida.setDuracion(rs.getTime("duracion"));
+                lista.add(partida);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+    
+    //Metodo para ver todas las partidas
+    public static List<Partida> obtenerTodasLasPartidas() {
+        List<Partida> lista = new ArrayList<>();
+        String sql = "SELECT * FROM partidas";
+
+        try (Connection conn = conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Partida partida = new Partida();
+                partida.setId(rs.getInt("id"));
+                partida.setJugador1(rs.getString("jugador1"));
+                partida.setJugador2(rs.getString("jugador2"));
+                partida.setGanador(rs.getString("ganador"));
+                partida.setPersonajeGanador(rs.getString("personaje_ganador"));
+                partida.setFecha(rs.getDate("fecha"));
+                partida.setDuracion(rs.getTime("duracion"));
+                lista.add(partida);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+
+
 
     // Método auxiliar para mapear un ResultSet a un objeto Jugador
     private static Jugador mapearJugador(ResultSet rs) throws SQLException {

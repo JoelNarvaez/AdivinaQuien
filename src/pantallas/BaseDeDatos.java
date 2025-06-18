@@ -11,130 +11,102 @@ package pantallas;
 
 import Estilos.RoundedBorder;
 import Estilos.RoundedPanel;
+import Estilos.Button;
+import componentes.Jugadores;
+import componentes.PantallaDuracion;
+import componentes.PantallaNombres;
+import componentes.PantallaPartidas;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import pantallas.ConexionBD;
 
 public class BaseDeDatos extends JFrame {
+     private CardLayout cardLayout;
+    private JPanel contenedorPantallas;
+
     public BaseDeDatos() {
-        setTitle("Base de datos de jugadores");
+        setTitle("Sistema de Base de Datos");
         setSize(1000, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setExtendedState(JFrame.MAXIMIZED_BOTH); // Pantalla completa
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setExtendedState(MAXIMIZED_BOTH);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(Color.WHITE);
+        cardLayout = new CardLayout();
+        contenedorPantallas = new JPanel(cardLayout);
 
-        JLabel titulo = new JLabel("Base de datos de jugadores", SwingConstants.CENTER);
-        titulo.setFont(new Font("Arial", Font.BOLD, 20));
-        titulo.setForeground(new Color(100, 0, 200));
-        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(titulo);
-
-        List<Jugador> jugadores = ConexionBD.obtenerJugadores();
-        System.out.println("Jugadores cargados: " + jugadores.size());
-
-        int contador = 1;
-        for (Jugador j : jugadores) {
-            panel.add(Box.createRigidArea(new Dimension(0, 10))); // 20 píxeles de espacio vertica
-            panel.add(crearPanelJugador(j, contador));
-            panel.add(Box.createRigidArea(new Dimension(0, 20))); // 20 píxeles de espacio vertical
-            contador++;
-        }
-
-        JScrollPane scrollPane = new JScrollPane(panel);
-        scrollPane.setBackground(new Color(151, 231, 255));
-        scrollPane.getViewport().setBackground(new Color(151, 231, 255)); // <-- muy importante
-        add(scrollPane);
+        // Pantallas
+        contenedorPantallas.add(new Jugadores(), "jugadores");
+        contenedorPantallas.add(new PantallaPartidas(), "todasPartidas");
+        contenedorPantallas.add(new PantallaDuracion(), "porDuracion");
+        contenedorPantallas.add(new PantallaNombres(), "porNombre");
+        
+        
+        setLayout(new BorderLayout());
+        add(crearMenu(), BorderLayout.NORTH);
+        add(contenedorPantallas, BorderLayout.CENTER);
     }
 
-  private JPanel crearPanelJugador(Jugador jugador, int numero) {
-    // Definir colores diferentes para cada jugador
-    Color[] colores = {
-        new Color(151, 231, 255),  // Azul
-        new Color(200, 255, 200),  // Verde claro
-        new Color(255, 235, 180)   // Amarillo claro
-    };
-    Color colorFondo = colores[(numero - 1) % colores.length];
+    private JPanel crearMenu() {
+        JPanel menu = new JPanel();
+        menu.setLayout(new FlowLayout(FlowLayout.LEFT));
+        menu.setBackground(new Color(255, 255, 255));
 
-    RoundedPanel jugadorPanel = new RoundedPanel(30);
-    jugadorPanel.setPreferredSize(new Dimension(900, 270));
-    jugadorPanel.setMaximumSize(new Dimension(925, 270));
-    jugadorPanel.setMinimumSize(new Dimension(900, 270));
-    jugadorPanel.setBackground(colorFondo);
-    jugadorPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-    jugadorPanel.setLayout(new BorderLayout());
+       Font botonFont = new Font("Century Gothic", Font.BOLD, 18);
 
-    JPanel datosPanel = new JPanel(new GridLayout(1, 3));
-    datosPanel.setBackground(colorFondo);
-    datosPanel.setOpaque(true);
+        // Botón Jugadores
+        Button btnJugadores = new Button();
+        btnJugadores.setText("  Jugadores  ");
+        btnJugadores.setFont(botonFont);
+        btnJugadores.setBackground(new Color(204, 102, 255)); // #CC66FF
+        btnJugadores.setForeground(Color.WHITE);
 
-    JLabel icono = new JLabel();
-    icono.setIcon(new ImageIcon(getClass().getResource(jugador.getProfileIcon())));
-    icono.setFont(new Font("Century Gothic", Font.BOLD, 20));
-    icono.setText("Nickname: " + jugador.getNickname());
-    icono.setHorizontalTextPosition(SwingConstants.CENTER);
-    icono.setVerticalTextPosition(SwingConstants.BOTTOM);
-    icono.setForeground(Color.DARK_GRAY);
-    datosPanel.add(icono);
+        // Botón Todas las partidas
+        Button btnTodas = new Button();
+        btnTodas.setText("  Todas las partidas  ");
+        btnTodas.setFont(botonFont);
+        btnTodas.setBackground(new Color(102, 204, 255)); // #66CCFF
+        btnTodas.setForeground(Color.WHITE);
 
-    Font fuente = new Font("Century Gothic", Font.BOLD, 16);
-    Color colorTexto = new Color(40, 40, 40);
+        // Botón por duración
+        Button btnDuracion = new Button();
+        btnDuracion.setText("  Partidas por duración  ");
+        btnDuracion.setFont(botonFont);
+        btnDuracion.setBackground(new Color(255, 179, 71)); // #FFB347
+        btnDuracion.setForeground(Color.WHITE);
 
-    String encabezadoUsuario = "Datos del usuario: ";
-    JPanel usuario = new JPanel();
-    usuario.setBackground(colorFondo);
-    usuario.setOpaque(true);
-    usuario.setLayout(new BoxLayout(usuario, BoxLayout.Y_AXIS));
-    usuario.add(crearLabelEstilizado(encabezadoUsuario, fuente, colorTexto));
-    usuario.add(crearLabelEstilizado("Id: " + jugador.getId(), fuente, colorTexto));
-    usuario.add(crearLabelEstilizado("Edad: " + jugador.getEdad(), fuente, colorTexto));
-    usuario.add(crearLabelEstilizado("Victorias: " + jugador.getVictorias(), fuente, colorTexto));
-    usuario.add(crearLabelEstilizado("Derrotas: " + jugador.getDerrotas(), fuente, colorTexto));
-    datosPanel.add(usuario);
+        // Botón por jugador
+        Button btnPorJugador = new Button();
+        btnPorJugador.setText(" Partidas por jugador  ");
+        btnPorJugador.setFont(botonFont);
+        btnPorJugador.setBackground(new Color(102, 255, 153)); // #66FF99
+        btnPorJugador.setForeground(Color.WHITE);
+        
+        //Boton para regresar
+        Button btnRegresar = new Button();
+        btnRegresar.setText("  Regresar  ");
+        btnRegresar.setFont(botonFont);
+        btnRegresar.setBackground(new Color(102, 255, 153)); // #66FF99
+        btnRegresar.setForeground(Color.WHITE);
+        
+        btnJugadores.addActionListener(e -> cardLayout.show(contenedorPantallas, "jugadores"));
+        btnTodas.addActionListener(e -> cardLayout.show(contenedorPantallas, "todasPartidas"));
+        btnDuracion.addActionListener(e -> cardLayout.show(contenedorPantallas, "porDuracion"));
+        btnPorJugador.addActionListener(e -> cardLayout.show(contenedorPantallas, "porNombre"));
+        
+        btnRegresar.addActionListener(e -> {
+            new JFramePresentacion().setVisible(true);
+            dispose();  // << Cierra esta ventana JFrame directamente
+        });
 
-    String encabezadoPartida = "Datos del usuario: ";
-    JPanel partida = new JPanel();
-    partida.setBackground(colorFondo);
-    partida.setOpaque(true);
-    partida.setLayout(new BoxLayout(partida, BoxLayout.Y_AXIS));
-    partida.add(crearLabelEstilizado(encabezadoPartida, fuente, colorTexto));
-    partida.add(crearLabelEstilizado("Personaje adivinado: " + jugador.getPersonajeAdivinado(), fuente, colorTexto));
-    partida.add(crearLabelEstilizado("Tiempo de partida: " + jugador.getTiempo(), fuente, colorTexto));
-    partida.add(crearLabelEstilizado("Intentos: " + jugador.getIntentos(), fuente, colorTexto));
-    partida.add(crearLabelEstilizado("Fecha: " + jugador.getFechaPartida(), fuente, colorTexto));
-    datosPanel.add(partida);
+        menu.add(btnJugadores);
+        menu.add(btnTodas);
+        menu.add(btnDuracion);
+        menu.add(btnPorJugador);
+        menu.add(btnRegresar);
 
-    jugadorPanel.add(datosPanel, BorderLayout.CENTER);
-
-    JPanel rankingPanel = new JPanel();
-    rankingPanel.setBackground(colorFondo);
-    rankingPanel.setOpaque(true);
-    JLabel ranking = new JLabel("RANKING: " + jugador.getRanking());
-    ranking.setForeground(Color.BLACK);
-    ranking.setFont(new Font("Arial", Font.BOLD, 18));
-    rankingPanel.add(ranking);
-    jugadorPanel.add(rankingPanel, BorderLayout.SOUTH);
-
-    return jugadorPanel;
-}
- private Component crearLabelEstilizado(String texto, Font fuente, Color color) {
-    JPanel contenedor = new JPanel();
-    contenedor.setLayout(new BoxLayout(contenedor, BoxLayout.Y_AXIS));
-    contenedor.setOpaque(false); // sin fondo
-
-    JLabel label = new JLabel(texto);
-    label.setFont(fuente);
-    label.setForeground(color);
-    contenedor.add(label);
-
-    contenedor.add(Box.createVerticalStrut(13)); // espacio de 5px abajo
-
-    return contenedor;
-}
+        return menu;
+    }
  
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
