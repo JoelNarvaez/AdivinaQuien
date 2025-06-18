@@ -1,1 +1,8 @@
-/nbproject/private/
+
+# Ignorar clases compiladas
+build/
+*.class
+
+# Ignorar configuraciones privadas de NetBeans
+nbproject/private/
+

@@ -6,8 +6,11 @@ package pantallas;
 
 import Estilos.Button;
 import Estilos.MyTextField;
+import Estilos.RoundedTextField;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -22,7 +25,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     private JButton[] personajeButtons = new JButton[24];
     private JLabel cronometroLabel;
     private int crono = 0;
-    PersonajeDisney[] seleccionados = elegirPersonajesAleatorios(24);
+    PersonajeDisney[] seleccionados;
     private JLabel personajeImagen;
     private boolean seleccionHecha = false;
     private boolean faseSeleccion = true; // Al principio se está escogiendo personaje
@@ -54,9 +57,10 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     }
 }
     
-    public JFrameGameScreen(Jugador jugador) {
+    public JFrameGameScreen(Jugador jugador, PersonajeDisney[] personajes) { //añadir ademas de jugador un vector de PersonajeDisney de tamaño 24 que sea igual en los dos jugadores (supongo generalo en servidor)
     this.jugador = jugador;
-    setTitle("Adivina Quién");
+    this.seleccionados = personajes; //aqui solo se hizo eso porque antes se utilizaba seleccionados pero local ahora se renueva con el constructor
+    setTitle("Adivina Quién"); 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setExtendedState(JFrame.MAXIMIZED_BOTH);
 
@@ -108,7 +112,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     lblImagen.setVisible(false);
 
     // Combo pequeño
-    JComboBox<PersonajeDisney> comboPersonajes = new JComboBox<>(seleccionados);
+    JComboBox<PersonajeDisney> comboPersonajes = new JComboBox<>(seleccionados); //aqui esta bien todo aqui recibiria el DisneyPersonajes de 24 personajes que se recibio en los parametros
     comboPersonajes.setFont(new Font("Century Gothic", Font.PLAIN, 16));
     comboPersonajes.setPreferredSize(new Dimension(170, 38));
     comboPersonajes.setMaximumSize(new Dimension(170, 38));
@@ -234,75 +238,154 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     }
 
     private JPanel crearPanelJuego() {
-        // *** AQUÍ VA TODO TU CÓDIGO DEL LAYOUT DEL JUEGO ***
-        // Pego aquí sólo la estructura principal, pon tu código aquí (o usa lo que tienes arriba)
-        // Reutiliza las variables: fechaHoraLabel, personajeButtons, cronometroLabel
-
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        
         // Inicializar fecha y hora
-        fechaHoraLabel = new JLabel();
-        fechaHoraLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        fechaHoraLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        actualizarFechaHora();
+        setTitle("ADIVINA QUIÉN");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setExtendedState(MAXIMIZED_BOTH);
 
+        Color azulFuerte = new Color(0xA3, 0xD0, 0xF1);
+        Color azulMedio = new Color(0xD4, 0xEB, 0xFD);
+        Color celeste = new Color(0x97, 0xE9, 0xFF);
+        Color lila = new Color(0xDC, 0xBB, 0xEB);
+        Color btnColor = new Color (0xD4, 0xFB, 0xED);
+
+        fechaHoraLabel = new JLabel();
+        fechaHoraLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        fechaHoraLabel.setForeground(Color.WHITE);
+        actualizarFechaHora();
         Timer timer = new Timer(1000, e -> actualizarFechaHora());
         timer.start();
 
         cronometroLabel = new JLabel("Tiempo: 00:00");
-        cronometroLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        cronometroLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-
+        cronometroLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        cronometroLabel.setForeground(Color.WHITE);
         Timer cronometroTimer = new Timer(1000, e -> actualizarCronometro());
         cronometroTimer.start();
 
-        // Colores
-        Color fondoPrincipal = new Color(245, 245, 255);
-        Color fondoSecundario = new Color(200, 220, 255);
-        Color colorBoton = new Color(180, 200, 255);
-
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        mainPanel.setBackground(fondoPrincipal);
-
-        // PANEL SUPERIOR
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setBackground(fondoPrincipal);
+        topPanel.setBackground(azulFuerte);
+        topPanel.setPreferredSize(new Dimension(0, 70));
 
-        JPanel rightTopPanel = new JPanel();
-        rightTopPanel.setLayout(new BoxLayout(rightTopPanel, BoxLayout.Y_AXIS));
-        rightTopPanel.setBackground(fondoPrincipal);
-        rightTopPanel.add(fechaHoraLabel);
-        rightTopPanel.add(cronometroLabel);
+        Button salirBtn = new Button();
+        salirBtn.setText("  ?  ");
+        salirBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        salirBtn.setBackground(Color.RED);
+        salirBtn.setForeground(Color.WHITE);
 
-        topPanel.add(rightTopPanel, BorderLayout.EAST);
+        salirBtn.addActionListener(e -> {
+            JDialog dialogo = new JDialog((JFrame) SwingUtilities.getWindowAncestor(salirBtn), "Opciones del juego", true);
+            dialogo.setSize(220, 370);
+            dialogo.getContentPane().setBackground(btnColor);
+            dialogo.setLayout(new BorderLayout());
 
-        JPanel leftTopPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        leftTopPanel.setBackground(fondoPrincipal);
-        JButton salirBtn = new JButton("Salir");
+            JPanel contenedor = new JPanel();
+            contenedor.setBackground(azulMedio); 
+            contenedor.setLayout(new BoxLayout(contenedor, BoxLayout.Y_AXIS));
+            contenedor.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+
+            String[][] opciones = {
+                {"musica.png", "Música"},
+                {"menu.png", "Perfil"},
+                {"pelota.png", "Instrucciones"},
+                {"menu.png", "Menú"},
+                {"cancelar.png", "Cancelar"}
+            };
+
+            for (String[] opcion : opciones) {
+                String ruta = "/Imagenes/disenoPantallas/" + opcion[0];
+                String texto = opcion[1];
+
+                JPanel opcionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+                opcionPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+                opcionPanel.setOpaque(false);
+                opcionPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // margen interno
+
+                JButton btn = new JButton();
+                btn.setPreferredSize(new Dimension(40, 40));
+                btn.setMaximumSize(new Dimension(40, 40));
+                btn.setMinimumSize(new Dimension(40, 40));
+                btn.setContentAreaFilled(false);
+                btn.setFocusPainted(false);
+                btn.setBorderPainted(false);
+
+                java.net.URL url = getClass().getResource(ruta);
+                if (url != null) {
+                    ImageIcon icono = new ImageIcon(url);
+                    Image img = icono.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+                    btn.setIcon(new ImageIcon(img));
+                }
+
+                JLabel etiqueta = new JLabel(texto);
+                etiqueta.setFont(new Font("Cambria", Font.BOLD, 18));
+                etiqueta.setForeground(Color.BLACK);
+
+                opcionPanel.add(btn);
+                opcionPanel.add(etiqueta);
+
+                switch (texto) {
+                    case "Música":
+                        btn.addActionListener(ev -> {
+                            // pausarMusica();
+                            dialogo.dispose();
+                        });
+                        break;
+                    case "Perfil":
+                        btn.addActionListener(ev -> {
+                            // mostrarPerfil();
+                            dialogo.dispose();
+                        });
+                        break;
+                    case "Instrucciones":
+                        btn.addActionListener(ev -> {
+                            // mostrarInstrucciones();
+                            dialogo.dispose();
+                        });
+                        break;
+                    case "Menú":
+                        btn.addActionListener(ev -> {
+                            // irAlMenuPrincipal();
+                            dialogo.dispose();
+                        });
+                        break;
+                    case "Cancelar":
+                        btn.addActionListener(ev -> dialogo.dispose());
+                        break;
+                }
+
+                contenedor.add(opcionPanel);
+            }
+
+            dialogo.add(contenedor, BorderLayout.CENTER);
+            dialogo.setLocationRelativeTo(salirBtn);
+            dialogo.setVisible(true);
+        });
+
+        JPanel leftTopPanel = new JPanel();
+        leftTopPanel.setLayout(new BoxLayout(leftTopPanel, BoxLayout.Y_AXIS));
+        leftTopPanel.setBackground(azulFuerte);
+        leftTopPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+       
+        salirBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        leftTopPanel.add(Box.createVerticalGlue());
         leftTopPanel.add(salirBtn);
-
-        JPanel adivinarPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        adivinarPanel.setBackground(fondoPrincipal);
-        JComboBox<PersonajeDisney> personajeCombo = new JComboBox<>(seleccionados);
-        JButton adivinarBtn = new JButton("Adivinar");
-        adivinarPanel.add(personajeCombo);
-        adivinarPanel.add(adivinarBtn);
-
-        JPanel centroContenedor = new JPanel(new BorderLayout());
-        centroContenedor.setBackground(fondoPrincipal);
-
-        mainPanel.add(centroContenedor, BorderLayout.CENTER);
-
+        leftTopPanel.add(Box.createVerticalGlue());
+        
         topPanel.add(leftTopPanel, BorderLayout.WEST);
-
+        
         // PANEL PERSONAJES
-
         JPanel personajesPanel = new JPanel(new GridLayout(4, 6, 10, 10));
-        personajesPanel.setBackground(fondoSecundario);
+        personajesPanel.setBackground(azulMedio);
+        personajesPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-   
         for (int i = 0; i < 24; i++) {
+            final int idx = i;
             PersonajeDisney personaje = seleccionados[i];
             personajeButtons[i] = new JButton(); // SIEMPRE inicializa el botón aquí
+
+            java.net.URL urlSigno = getClass().getResource("/Imagenes/disenoPantallas/signo.png");
 
             if (personaje == null) {
                 personajeButtons[i].setText("?");
@@ -311,8 +394,30 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 java.net.URL url = getClass().getResource(personaje.getRutaImagen());
                 if (url != null) {
                     ImageIcon icon = new ImageIcon(url);
-                    Image img = icon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
-                    personajeButtons[i].setIcon(new ImageIcon(img));
+                    Image original = icon.getImage();
+                    personajeButtons[i].putClientProperty("originalImage", original); // Guardar imagen original
+
+                    // Escalar imagen al tamaño actual del botón
+                    Image scaled = original.getScaledInstance(
+                        personajeButtons[i].getPreferredSize().width,
+                        personajeButtons[i].getPreferredSize().height,
+                        Image.SCALE_SMOOTH
+                    );
+                    personajeButtons[i].setIcon(new ImageIcon(scaled));
+
+                    // Agregar listener para escalar cuando el botón cambie de tamaño
+                    personajeButtons[i].addComponentListener(new ComponentAdapter() {
+                        @Override
+                        public void componentResized(ComponentEvent e) {
+                            Image imgOriginal = (Image) personajeButtons[idx].getClientProperty("originalImage");
+                            if (imgOriginal != null) {
+                                int w = personajeButtons[idx].getWidth();
+                                int h = personajeButtons[idx].getHeight();
+                                Image scaled = imgOriginal.getScaledInstance(w, h, Image.SCALE_SMOOTH);
+                                personajeButtons[idx].setIcon(new ImageIcon(scaled));
+                            }
+                        }
+                    });
                 } else {
                     personajeButtons[i].setText("?");
                 }
@@ -321,9 +426,8 @@ public class JFrameGameScreen extends javax.swing.JFrame {
             }
 
             personajeButtons[i].setPreferredSize(new Dimension(100, 100));
-            personajeButtons[i].setBackground(colorBoton);
+            personajeButtons[i].setBackground(lila);
 
-            final int idx = i;
             personajeButtons[i].addActionListener(e -> {
                 if (faseSeleccion && !seleccionHecha) {
                     if (personajeButtons[idx].getClientProperty("personaje") == null) return;
@@ -340,17 +444,48 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 } else if (!faseSeleccion) {
                     cartaGirada[idx] = !cartaGirada[idx];
                     if (cartaGirada[idx]) {
-                        personajeButtons[idx].setIcon(null);
-                        personajeButtons[idx].setText("?");
+                        if (urlSigno != null) {
+                            ImageIcon iconSigno = new ImageIcon(urlSigno);
+                            Image imgSigno = iconSigno.getImage().getScaledInstance(
+                                personajeButtons[idx].getWidth(),
+                                personajeButtons[idx].getHeight(),
+                                Image.SCALE_SMOOTH
+                            );
+                            personajeButtons[idx].setIcon(new ImageIcon(imgSigno));
+                            personajeButtons[idx].setText("");
+                        } else {
+                            personajeButtons[idx].setIcon(null);
+                            personajeButtons[idx].setText("?");
+                        }
                     } else {
                         PersonajeDisney p = (PersonajeDisney) personajeButtons[idx].getClientProperty("personaje");
                         if (p != null) {
                             java.net.URL url2 = getClass().getResource(p.getRutaImagen());
                             if (url2 != null) {
                                 ImageIcon icon2 = new ImageIcon(url2);
-                                Image img2 = icon2.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
-                                personajeButtons[idx].setIcon(new ImageIcon(img2));
+                                Image original = icon2.getImage();
+                                personajeButtons[idx].putClientProperty("originalImage", original);
+                                int w = personajeButtons[idx].getWidth();
+                                int h = personajeButtons[idx].getHeight();
+                                Image scaled = original.getScaledInstance(w, h, Image.SCALE_SMOOTH);
+                                personajeButtons[idx].setIcon(new ImageIcon(scaled));
                                 personajeButtons[idx].setText("");
+
+                                // Verifica si ya se agregó un listener para evitar duplicados
+                                if (personajeButtons[idx].getComponentListeners().length == 0) {
+                                    personajeButtons[idx].addComponentListener(new ComponentAdapter() {
+                                        @Override
+                                        public void componentResized(ComponentEvent e) {
+                                            Image imgOriginal = (Image) personajeButtons[idx].getClientProperty("originalImage");
+                                            if (imgOriginal != null) {
+                                                int w = personajeButtons[idx].getWidth();
+                                                int h = personajeButtons[idx].getHeight();
+                                                Image scaled = imgOriginal.getScaledInstance(w, h, Image.SCALE_SMOOTH);
+                                                personajeButtons[idx].setIcon(new ImageIcon(scaled));
+                                            }
+                                        }
+                                    });
+                                }
                             }
                         }
                     }
@@ -360,17 +495,71 @@ public class JFrameGameScreen extends javax.swing.JFrame {
             personajesPanel.add(personajeButtons[i]);
         }
 
-        centroContenedor.add(adivinarPanel, BorderLayout.NORTH);
-        centroContenedor.add(personajesPanel, BorderLayout.CENTER);
+        
+        JComboBox<PersonajeDisney> personajeCombo = new JComboBox<>(seleccionados);
+        personajeCombo.setMaximumSize(new Dimension(250,30));
+        personajeCombo.setPreferredSize(new Dimension(250,30));
 
-        // PANEL DERECHO
+        Button adivinarBtnTop = new Button();
+        adivinarBtnTop.setText("Adivinar");
+        adivinarBtnTop.setFont(new Font("Arial", Font.BOLD, 14));
+        adivinarBtnTop.setBackground(new Color(0x55, 0x7D, 0xC2));
+        adivinarBtnTop.setForeground(Color.WHITE);
+        adivinarBtnTop.setPreferredSize(new Dimension(100, 30));
+        adivinarBtnTop.setMaximumSize(new Dimension(100, 30));
+
+        JPanel rightTopPanel = new JPanel();
+        rightTopPanel.setLayout(new BoxLayout(rightTopPanel, BoxLayout.X_AXIS));
+        rightTopPanel.setBackground(azulFuerte);
+        rightTopPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 20));
+
+        rightTopPanel.add(Box.createHorizontalGlue());
+        rightTopPanel.add(personajeCombo);
+        rightTopPanel.add(Box.createHorizontalStrut(15));
+        rightTopPanel.add(adivinarBtnTop);
+        rightTopPanel.add(Box.createHorizontalStrut(50));
+        rightTopPanel.add(cronometroLabel);
+        rightTopPanel.add(Box.createHorizontalStrut(15));
+        rightTopPanel.add(fechaHoraLabel);
+        rightTopPanel.add(Box.createHorizontalStrut(10));
+
+        topPanel.add(rightTopPanel, BorderLayout.EAST);
+
+        JPanel tituloPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 15));
+        tituloPanel.setOpaque(false);
+
+        JLabel titulo = new JLabel("¿ADIVINA QUIÉN?");
+        titulo.setFont(new Font("Comic Sans MS", Font.BOLD, 32));
+        titulo.setForeground(Color.WHITE);
+        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        ImageIcon logoIcon = new ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/disneyTitulo.png"));
+        Image img = logoIcon.getImage().getScaledInstance(60, 30, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(img);
+        
+        JLabel logoLabel = new JLabel(scaledIcon);
+       
+        tituloPanel.add(titulo);
+        tituloPanel.add(logoLabel);
+        
+        topPanel.add(tituloPanel, BorderLayout.CENTER);
+
+        JPanel centroPanel = new JPanel(new BorderLayout());
+        centroPanel.setBackground(celeste);
+        centroPanel.add(personajesPanel, BorderLayout.CENTER);
+
         JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.setPreferredSize(new Dimension(300, 0));
+        rightPanel.setBackground(lila);
+        rightPanel.setPreferredSize(new Dimension(350, 0));
 
-        JPanel infoPanel = new JPanel();
-        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-        infoPanel.setBackground(fondoSecundario);
-
+        JPanel contenidoDerecho = new JPanel();
+        contenidoDerecho.setLayout(new BoxLayout(contenidoDerecho, BoxLayout.Y_AXIS));
+        contenidoDerecho.setOpaque(false);
+        contenidoDerecho.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
+        contenidoDerecho.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        rightPanel.add(contenidoDerecho, BorderLayout.NORTH);
+        
         JLabel nicknameLabel = new JLabel("Nickname: " + jugador.getNickname());
         JLabel turnoLabel = new JLabel("Es tu turno");
         personajeLabel = new JLabel("Eres: " );
@@ -384,61 +573,88 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         personajeImagen.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         personajeImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        infoPanel.add(Box.createVerticalStrut(10));
-        infoPanel.add(nicknameLabel);
-        infoPanel.add(turnoLabel);
-        infoPanel.add(personajeLabel);
-        infoPanel.add(Box.createVerticalStrut(10));
-        infoPanel.add(personajeImagen);
-
-        JPanel chatPanel = new JPanel(new BorderLayout(5, 5));
-        chatPanel.setBackground(fondoSecundario);
-
-        JComboBox<String> preguntasComboBox = new JComboBox<>();
-        for (String pregunta : ConexionBD.obtenerPreguntasActivas()) {
-            preguntasComboBox.addItem(pregunta);
+        Font labelFont = new Font("Arial", Font.BOLD, 18);
+        Color labelColor = Color.WHITE;
+        for (JLabel label : new JLabel[]{nicknameLabel, turnoLabel, personajeLabel}) {
+            label.setFont(labelFont);
+            label.setForeground(labelColor);
+            label.setAlignmentX(Component.CENTER_ALIGNMENT);
         }
-        chatPanel.add(preguntasComboBox, BorderLayout.NORTH);
+        personajeImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JTextArea chatArea = new JTextArea();
-        chatArea.setEditable(false);
-        JScrollPane chatScroll = new JScrollPane(chatArea);
+        JComboBox<String> preguntasCombo = new JComboBox<>();
+            for (String pregunta : ConexionBD.obtenerPreguntasActivas()) {
+                preguntasCombo.addItem(pregunta);
+            }
+        preguntasCombo.setFont(new Font("Arial", Font.BOLD, 14));
+        preguntasCombo.setMaximumSize(new Dimension(300, 35));
+        preguntasCombo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JPanel inputGroup = new JPanel(new BorderLayout(5, 5));
+        JTextArea areaPreguntas = new JTextArea(10, 25);
+        areaPreguntas.setFont(new Font("Arial", Font.PLAIN, 14));
+        areaPreguntas.setLineWrap(true);
+        areaPreguntas.setWrapStyleWord(true);
+        areaPreguntas.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1, true));
+        areaPreguntas.setMaximumSize(new Dimension(300, 200));
+        areaPreguntas.setPreferredSize(new Dimension(300, 200));
+        areaPreguntas.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        RoundedTextField preguntaInput = new RoundedTextField(25);
+        preguntaInput.setFont(new Font("Arial", Font.PLAIN, 14));
+        preguntaInput.setMaximumSize(new Dimension(180, 40));
 
-        JTextField chatInput = new JTextField();
-        JButton enviarBtn = new JButton("Enviar");
+        Button enviarBtn = new Button();
+        enviarBtn.setText("Enviar");
+        enviarBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        enviarBtn.setBackground(new Color(0xB1, 0x67, 0xD1));
+        enviarBtn.setForeground(Color.WHITE);
+        enviarBtn.setMaximumSize(new Dimension(110, 40));
 
-        inputGroup.add(chatInput, BorderLayout.CENTER);
-        inputGroup.add(enviarBtn, BorderLayout.EAST);
+        JPanel enviarPanel = new JPanel();
+        enviarPanel.setLayout(new BoxLayout(enviarPanel, BoxLayout.X_AXIS));
+        enviarPanel.setOpaque(false);
+        enviarPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        enviarPanel.add(preguntaInput);
+        enviarPanel.add(Box.createHorizontalStrut(10));
+        enviarPanel.add(enviarBtn);
 
-        chatPanel.add(chatScroll, BorderLayout.CENTER);
+        Button siBtn = new Button();
+        Button noBtn = new Button();
+        siBtn.setText("Si");
+        noBtn.setText("No");
+        siBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        noBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        siBtn.setBackground(new Color(0x74, 0xE6, 0x86));
+        noBtn.setBackground(new Color(0xFF, 0x70, 0x70));
+        siBtn.setPreferredSize(new Dimension(80,35));
+        noBtn.setPreferredSize(new Dimension(80,35));
 
-        JPanel respuestaPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JButton siBtn = new JButton("Sí");
-        JButton noBtn = new JButton("No");
-        respuestaPanel.add(siBtn);
-        respuestaPanel.add(noBtn);
+        JPanel botonesPanel = new JPanel();
+        botonesPanel.setLayout(new BoxLayout(botonesPanel, BoxLayout.X_AXIS));
+        botonesPanel.setOpaque(false);
+        botonesPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        botonesPanel.add(Box.createHorizontalGlue());
+        botonesPanel.add(siBtn);
+        botonesPanel.add(Box.createHorizontalStrut(20));
+        botonesPanel.add(noBtn);
+        botonesPanel.add(Box.createHorizontalGlue());
 
-        JPanel inputYRespuestaPanel = new JPanel();
-        inputYRespuestaPanel.setLayout(new BoxLayout(inputYRespuestaPanel, BoxLayout.Y_AXIS));
-
-        inputGroup.setMaximumSize(new Dimension(Integer.MAX_VALUE, inputGroup.getPreferredSize().height));
-        respuestaPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, respuestaPanel.getPreferredSize().height));
-
-        inputYRespuestaPanel.add(inputGroup);
-        inputYRespuestaPanel.add(respuestaPanel);
-
-        chatPanel.add(inputYRespuestaPanel, BorderLayout.SOUTH);
-
-        JPanel infoYChatPanel = new JPanel(new BorderLayout(10, 10));
-        infoYChatPanel.setBackground(fondoSecundario);
-        infoYChatPanel.add(infoPanel, BorderLayout.NORTH);
-        infoYChatPanel.add(chatPanel, BorderLayout.CENTER);
-
-        rightPanel.add(infoYChatPanel, BorderLayout.CENTER);
+        contenidoDerecho.add(nicknameLabel);
+        contenidoDerecho.add(Box.createVerticalStrut(8));
+        contenidoDerecho.add(turnoLabel);
+        contenidoDerecho.add(Box.createVerticalStrut(8));
+        contenidoDerecho.add(personajeImagen);
+        contenidoDerecho.add(Box.createVerticalStrut(20));
+        contenidoDerecho.add(preguntasCombo);
+        contenidoDerecho.add(Box.createVerticalStrut(10));
+        contenidoDerecho.add(areaPreguntas);
+        contenidoDerecho.add(Box.createVerticalStrut(10));
+        contenidoDerecho.add(enviarPanel);
+        contenidoDerecho.add(Box.createVerticalStrut(10));
+        contenidoDerecho.add(botonesPanel);
 
         mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(centroPanel, BorderLayout.CENTER);
         mainPanel.add(rightPanel, BorderLayout.EAST);
 
         return mainPanel;
