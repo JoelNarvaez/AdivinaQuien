@@ -24,6 +24,7 @@ import pantallas.ConexionBD;
 import pantallas.JFrameGameScreen;
 import pantallas.JFrameRegistro;
 import pantallas.Jugador;
+import pantallas.PersonajeDisney;
 
 public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     private Jugador jugador;
@@ -236,8 +237,9 @@ private PanelCover panelCover; // Agrega esta variable
     });
 
     jugarBtn.addActionListener(e -> {
-        //cambios de lore
+        // cambios de lore
         String nickname = nicknameField.getText().trim();
+
         jugador = ConexionBD.buscarPorNombre(nickname);
 
         if (jugador == null) {
@@ -256,13 +258,21 @@ private PanelCover panelCover; // Agrega esta variable
             return;
         }
 
-        // Mostrar pantalla de juego
-        JFrameGameScreen gameScreen = new JFrameGameScreen(jugador);
+        // Obtener personajes recibidos desde el servidor
+        PersonajeDisney[] personajes = cliente.getPersonajesRecibidos();
+        if (personajes == null) {
+            JOptionPane.showMessageDialog(register, "No se recibieron los personajes del servidor", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Mostrar pantalla de juego pasando personajes
+        JFrameGameScreen gameScreen = new JFrameGameScreen(jugador, personajes);
         gameScreen.setVisible(true);
 
         Window window = SwingUtilities.getWindowAncestor(this);
         if (window != null) window.dispose();
     });
+
 
     leftArrowBtn.addActionListener(e -> {
         if (startIndex > 0) {
@@ -323,66 +333,76 @@ private void updateAvatars() {
         cmd.setText("DESCUBRIR");
         login.add(cmd, "Gapy 30, w 30%, h 50");
         cmd.addActionListener(e -> {
-        //cambios de lore
-        String nickname = txtEmail.getText().trim();
-        jugador = ConexionBD.buscarPorNombre(nickname);
+            // cambios de lore
+            String nickname = txtEmail.getText().trim();
 
-        if (nickname.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                login,
-                "Por favor, ingresa tu Nickname.",
-                "Campo vacío",
-                JOptionPane.WARNING_MESSAGE
-            );
-            return;
-        }
-
-        if (jugador == null) {
-            int opcion = JOptionPane.showConfirmDialog(
-                login,
-                "No te encuentras registrado.\n¿Quieres registrarte?",
-                "Registro",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE
-            );
-
-            if (opcion == JOptionPane.YES_OPTION && panelCover != null) {
-                panelCover.getButton().doClick();
-            } else {
+            if (nickname.isEmpty()) {
                 JOptionPane.showMessageDialog(
                     login,
-                    "Este nickname no existe.",
-                    "Intenta de nuevo.",
-                    JOptionPane.INFORMATION_MESSAGE
+                    "Por favor, ingresa tu Nickname.",
+                    "Campo vacío",
+                    JOptionPane.WARNING_MESSAGE
                 );
+                return;
             }
-            return;
-        }
 
-        // ✅ Conexión al servidor
-        Cliente cliente = new Cliente();
-        String host = "192.168.100.218";  // ← Cambia por la IP real del servidor si es necesario
-        int puerto = 12345;
+            jugador = ConexionBD.buscarPorNombre(nickname);
 
-        boolean conectado = cliente.conectar(host, puerto, jugador);
+            if (jugador == null) {
+                int opcion = JOptionPane.showConfirmDialog(
+                    login,
+                    "No te encuentras registrado.\n¿Quieres registrarte?",
+                    "Registro",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+                );
 
-        if (!conectado) {
-            JOptionPane.showMessageDialog(login, "No se pudo conectar al servidor", "Error de conexión", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+                if (opcion == JOptionPane.YES_OPTION && panelCover != null) {
+                    panelCover.getButton().doClick();
+                } else {
+                    JOptionPane.showMessageDialog(
+                        login,
+                        "Este nickname no existe.",
+                        "Intenta de nuevo.",
+                        JOptionPane.INFORMATION_MESSAGE
+                    );
+                }
+                return;
+            }
 
-        JOptionPane.showMessageDialog(
-            login,
-            "¡Hola, " + jugador.getNickname() + "! \n Disfruta el juego",
-            "Bienvenido",
-            JOptionPane.INFORMATION_MESSAGE
-        );
+            // Conexión al servidor
+            Cliente cliente = new Cliente();
+            String host = "192.168.100.218";  // ← Cambia por la IP real del servidor si es necesario
+            int puerto = 12345;
 
-        JFrameGameScreen gameScreen = new JFrameGameScreen(jugador);
-        gameScreen.setVisible(true);
-        Window window = SwingUtilities.getWindowAncestor(this);
-        if (window != null) window.dispose();
-});
+            boolean conectado = cliente.conectar(host, puerto, jugador);
+
+            if (!conectado) {
+                JOptionPane.showMessageDialog(login, "No se pudo conectar al servidor", "Error de conexión", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Obtener personajes desde el cliente
+            PersonajeDisney[] personajes = cliente.getPersonajesRecibidos();
+            if (personajes == null) {
+                JOptionPane.showMessageDialog(login, "No se recibieron los personajes del servidor", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            JOptionPane.showMessageDialog(
+                login,
+                "¡Hola, " + jugador.getNickname() + "! \n Disfruta el juego",
+                "Bienvenido",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+
+            // Pasar también los personajes al constructor del juego
+            JFrameGameScreen gameScreen = new JFrameGameScreen(jugador, personajes);
+            gameScreen.setVisible(true);
+
+            Window window = SwingUtilities.getWindowAncestor(this);
+            if (window != null) window.dispose();
+        });
     }
 
     public void showRegister(boolean show) {

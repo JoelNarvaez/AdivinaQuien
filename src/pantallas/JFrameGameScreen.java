@@ -22,7 +22,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     private JButton[] personajeButtons = new JButton[24];
     private JLabel cronometroLabel;
     private int crono = 0;
-    PersonajeDisney[] seleccionados = elegirPersonajesAleatorios(24);
+    PersonajeDisney[] seleccionados;
     private JLabel personajeImagen;
     private boolean seleccionHecha = false;
     private boolean faseSeleccion = true; // Al principio se está escogiendo personaje
@@ -54,9 +54,10 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     }
 }
     
-    public JFrameGameScreen(Jugador jugador) {
+    public JFrameGameScreen(Jugador jugador, PersonajeDisney[] personajes) { //añadir ademas de jugador un vector de PersonajeDisney de tamaño 24 que sea igual en los dos jugadores (supongo generalo en servidor)
     this.jugador = jugador;
-    setTitle("Adivina Quién");
+    this.seleccionados = personajes; //aqui solo se hizo eso porque antes se utilizaba seleccionados pero local ahora se renueva con el constructor
+    setTitle("Adivina Quién"); 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setExtendedState(JFrame.MAXIMIZED_BOTH);
 
@@ -108,7 +109,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     lblImagen.setVisible(false);
 
     // Combo pequeño
-    JComboBox<PersonajeDisney> comboPersonajes = new JComboBox<>(seleccionados);
+    JComboBox<PersonajeDisney> comboPersonajes = new JComboBox<>(seleccionados); //aqui esta bien todo aqui recibiria el DisneyPersonajes de 24 personajes que se recibio en los parametros
     comboPersonajes.setFont(new Font("Century Gothic", Font.PLAIN, 16));
     comboPersonajes.setPreferredSize(new Dimension(170, 38));
     comboPersonajes.setMaximumSize(new Dimension(170, 38));

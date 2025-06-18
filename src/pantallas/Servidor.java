@@ -10,17 +10,22 @@ package pantallas;
  */
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static pantallas.PersonajeDisney.elegirPersonajesAleatorios;
 
 public class Servidor {
     private ServerSocket serverSocket;
     private ExecutorService pool;
+    private List<ObjectOutputStream> clientesConectados = new ArrayList<>();
 
     public void iniciarServidor(int puerto) {
         try {
             serverSocket = new ServerSocket(puerto);
-            pool = Executors.newFixedThreadPool(2); // por ahora solo 2 jugadores
+            pool = Executors.newFixedThreadPool(2); // solo 2 jugadores
 
             System.out.println("Servidor iniciado en puerto " + puerto);
 
@@ -42,13 +47,44 @@ public class Servidor {
 
         public void run() {
             try (
-                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                Socket clienteSocket = socket;
+                ObjectOutputStream out = new ObjectOutputStream(clienteSocket.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(clienteSocket.getInputStream());
             ) {
                 Jugador jugador = (Jugador) in.readObject();
                 System.out.println("Jugador conectado: " + jugador.getNickname());
-                // Aquí podrías guardarlo en lista si luego manejas turnos, etc.
 
+                synchronized (clientesConectados) {
+                    clientesConectados.add(out);
+
+                    if (clientesConectados.size() == 2) {
+                        // 1. Generar personajes aleatorios solo una vez
+                        PersonajeDisney[] seleccionados = elegirPersonajesAleatorios(24);
+
+                        // 2. Enviar "start" y luego el vector a ambos jugadores
+                        for (ObjectOutputStream clienteOut : clientesConectados) {
+                            clienteOut.writeObject("start");
+                            clienteOut.writeObject(seleccionados);
+                            clienteOut.flush();
+                        }
+
+                        // 3. Limpiar para permitir otro par
+                        clientesConectados.clear();
+                    }
+                }
+
+                // Escuchar mensajes del cliente conectado
+                while (true) {
+                    Object entrada = in.readObject(); // se bloquea esperando
+                    if (entrada instanceof String mensaje) {
+                        System.out.println("Mensaje recibido de " + jugador.getNickname() + ": " + mensaje);
+                    }
+                }
+
+            } catch (EOFException eof) {
+                System.out.println("Jugador desconectado (fin de flujo)");
+            } catch (SocketException se) {
+                System.out.println("Jugador desconectado (socket cerrado)");
             } catch (Exception e) {
                 e.printStackTrace();
             }
