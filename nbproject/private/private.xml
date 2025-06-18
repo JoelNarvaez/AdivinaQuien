@@ -3,18 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-
-            <file>file:/D:/UAA/Cuarto%20Semestre/Programación%20III/Proyecto%20Final/AdivinaQuien/src/pantallas/JFrameFelicitacion.java</file>
-            <file>file:/D:/UAA/Cuarto%20Semestre/Programación%20III/Proyecto%20Final/AdivinaQuien/src/pantallas/JFrameGameScreen.java</file>
-            <file>file:/D:/UAA/Cuarto%20Semestre/Programación%20III/Proyecto%20Final/AdivinaQuien/src/pantallas/JFrameInstrucciones.java</file>
-            <file>file:/D:/UAA/Cuarto%20Semestre/Programación%20III/Proyecto%20Final/AdivinaQuien/src/pantallas/JFrameRegistro.java</file>
-            <file>file:/D:/UAA/Cuarto%20Semestre/Programación%20III/Proyecto%20Final/AdivinaQuien/src/pantallas/ConexionBD.java</file>
-            <file>file:/D:/UAA/Cuarto%20Semestre/Programación%20III/Proyecto%20Final/AdivinaQuien/src/pantallas/JFramePresentacion.java</file>
-            <file>file:/D:/UAA/Cuarto%20Semestre/Programación%20III/Proyecto%20Final/AdivinaQuien/src/pantallas/JFrameCreditos.java</file>
-            <file>file:/D:/UAA/Cuarto%20Semestre/Programación%20III/Proyecto%20Final/AdivinaQuien/src/pantallas/JFrameAnimo.java</file>
-            <file>file:/D:/UAA/Cuarto%20Semestre/Programación%20III/Proyecto%20Final/AdivinaQuien/src/pantallas/BaseDeDatos.java</file>
-            <file>file:/D:/UAA/Cuarto%20Semestre/Programación%20III/Proyecto%20Final/AdivinaQuien/src/pantallas/Jugador.java</file>
-
+            <file>file:/C:/Users/joeln/netBeans/ProyectoFinal/src/componentes/PantallaNombres.java</file>
+            <file>file:/C:/Users/joeln/netBeans/ProyectoFinal/src/componentes/PanelLoginAndRegister.java</file>
+            <file>file:/C:/Users/joeln/netBeans/ProyectoFinal/src/pantallas/BaseDeDatos.java</file>
+            <file>file:/C:/Users/joeln/netBeans/ProyectoFinal/src/pantallas/ConexionBD.java</file>
+            <file>file:/C:/Users/joeln/netBeans/ProyectoFinal/src/pantallas/Partida.java</file>
+            <file>file:/C:/Users/joeln/netBeans/ProyectoFinal/src/pantallas/JFrameRegistro.java</file>
+            <file>file:/C:/Users/joeln/netBeans/ProyectoFinal/src/componentes/Jugadores.java</file>
+            <file>file:/C:/Users/joeln/netBeans/ProyectoFinal/src/componentes/PantallaPartidas.java</file>
+            <file>file:/C:/Users/joeln/netBeans/ProyectoFinal/src/pantallas/Jugador.java</file>
+            <file>file:/C:/Users/joeln/netBeans/ProyectoFinal/src/componentes/PantallaDuracion.java</file>
         </group>
     </open-files>
 </project-private>
