@@ -50,109 +50,150 @@ public class JFramePresentacion extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabelPortada = new javax.swing.JLabel();
-        jButtonIrJuego = new javax.swing.JButton();
-        jButtonInstruccion = new javax.swing.JButton();
-        jButtonCredito = new javax.swing.JButton();
-        jButtonInformacion = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
+        jLabelPortada = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabelInstrucciones = new javax.swing.JLabel();
+        jLabelRegistros = new javax.swing.JLabel();
+        jLabelCreditos = new javax.swing.JLabel();
+        jLabelJugar = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabelPortada1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setSize(new java.awt.Dimension(1920, 1080));
         getContentPane().setLayout(null);
 
-        jLabelPortada.setFont(new java.awt.Font("Centaur", 1, 150)); // NOI18N
-        jLabelPortada.setText("¿ A D I V I N A ");
-        getContentPane().add(jLabelPortada);
-        jLabelPortada.setBounds(450, 210, 2506, 172);
+        jPanel1.setBackground(new java.awt.Color(163, 208, 241));
+        jPanel1.setLayout(null);
 
-        jButtonIrJuego.setText("Ir a pantalla de juego");
-        jButtonIrJuego.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonIrJuegoActionPerformed(evt);
-            }
-        });
-        getContentPane().add(jButtonIrJuego);
-        jButtonIrJuego.setBounds(830, 700, 140, 23);
-
-        jButtonInstruccion.setText("Instruccion");
-        jButtonInstruccion.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonInstruccionActionPerformed(evt);
-            }
-        });
-        getContentPane().add(jButtonInstruccion);
-        jButtonInstruccion.setBounds(610, 710, 89, 23);
-
-        jButtonCredito.setText("Credito");
-        jButtonCredito.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonCreditoActionPerformed(evt);
-            }
-        });
-        getContentPane().add(jButtonCredito);
-        jButtonCredito.setBounds(890, 790, 72, 23);
-
-        jButtonInformacion.setText("Informacion");
-        jButtonInformacion.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonInformacionActionPerformed(evt);
-            }
-        });
-        getContentPane().add(jButtonInformacion);
-        jButtonInformacion.setBounds(1180, 700, 95, 23);
+        jLabel4.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel4.setFont(new java.awt.Font("Comic Sans MS", 1, 150)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("¿ A D I V I N A");
+        jPanel1.add(jLabel4);
+        jLabel4.setBounds(310, 150, 1380, 250);
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/lamparaPixar.gif"))); // NOI18N
-        getContentPane().add(jLabel1);
-        jLabel1.setBounds(730, 310, 482, 331);
+        jPanel1.add(jLabel1);
+        jLabel1.setBounds(690, 280, 482, 331);
 
-        jLabel2.setFont(new java.awt.Font("Centaur", 1, 150)); // NOI18N
-        jLabel2.setText("Q U   É N ?");
-        getContentPane().add(jLabel2);
-        jLabel2.setBounds(650, 410, 706, 252);
+        jLabel2.setFont(new java.awt.Font("Comic Sans MS", 1, 150)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("Q U  É N ?");
+        jPanel1.add(jLabel2);
+        jLabel2.setBounds(560, 350, 1020, 250);
 
-        jPanel1.setBackground(new java.awt.Color(204, 204, 255));
+        jLabelPortada.setBackground(new java.awt.Color(255, 255, 255));
+        jLabelPortada.setFont(new java.awt.Font("Comic Sans MS", 1, 150)); // NOI18N
+        jLabelPortada.setForeground(new java.awt.Color(153, 153, 153));
+        jLabelPortada.setText("¿ A D I V I N A ");
+        jPanel1.add(jLabelPortada);
+        jLabelPortada.setBounds(300, 170, 2506, 210);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1960, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1030, Short.MAX_VALUE)
-        );
+        jLabel3.setFont(new java.awt.Font("Comic Sans MS", 1, 150)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(153, 153, 153));
+        jLabel3.setText("Q U  É N ?");
+        jPanel1.add(jLabel3);
+        jLabel3.setBounds(550, 330, 990, 280);
+
+        jLabelInstrucciones.setBackground(new java.awt.Color(204, 204, 255));
+        jLabelInstrucciones.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/pelotaInstrucciones.png"))); // NOI18N
+        jLabelInstrucciones.setText("Pelota");
+        jLabelInstrucciones.setPreferredSize(new java.awt.Dimension(290, 290));
+        jLabelInstrucciones.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelInstruccionesMouseClicked(evt);
+            }
+        });
+        jPanel1.add(jLabelInstrucciones);
+        jLabelInstrucciones.setBounds(240, 640, 290, 290);
+
+        jLabelRegistros.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/Registros.png"))); // NOI18N
+        jLabelRegistros.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelRegistrosMouseClicked(evt);
+            }
+        });
+        jPanel1.add(jLabelRegistros);
+        jLabelRegistros.setBounds(710, 650, 130, 250);
+
+        jLabelCreditos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/casaCreditos.png"))); // NOI18N
+        jLabelCreditos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelCreditosMouseClicked(evt);
+            }
+        });
+        jPanel1.add(jLabelCreditos);
+        jLabelCreditos.setBounds(1000, 640, 180, 282);
+
+        jLabelJugar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/naveJugar.png"))); // NOI18N
+        jLabelJugar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelJugarMouseClicked(evt);
+            }
+        });
+        jPanel1.add(jLabelJugar);
+        jLabelJugar.setBounds(1350, 670, 330, 250);
+
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
+        jPanel1.add(jLabel7);
+        jLabel7.setBounds(1580, 40, 150, 110);
+
+        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
+        jPanel1.add(jLabel8);
+        jLabel8.setBounds(130, 40, 150, 110);
+
+        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
+        jPanel1.add(jLabel9);
+        jLabel9.setBounds(330, 40, 150, 110);
+
+        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
+        jPanel1.add(jLabel10);
+        jLabel10.setBounds(520, 40, 150, 110);
+
+        jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
+        jPanel1.add(jLabel12);
+        jLabel12.setBounds(1190, 40, 150, 110);
+
+        jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
+        jPanel1.add(jLabel13);
+        jLabel13.setBounds(1380, 40, 150, 110);
+
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/disneyTitulo.png"))); // NOI18N
+        jPanel1.add(jLabel5);
+        jLabel5.setBounds(790, 50, 300, 120);
 
         getContentPane().add(jPanel1);
-        jPanel1.setBounds(-10, -10, 1960, 1030);
+        jPanel1.setBounds(30, 0, 1960, 1030);
+
+        jLabelPortada1.setBackground(new java.awt.Color(255, 255, 255));
+        jLabelPortada1.setFont(new java.awt.Font("Comic Sans MS", 1, 150)); // NOI18N
+        jLabelPortada1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelPortada1.setText("¿ A D I V I N A ");
+        getContentPane().add(jLabelPortada1);
+        jLabelPortada1.setBounds(450, 210, 2506, 210);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonIrJuegoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonIrJuegoActionPerformed
+    private void jLabelJugarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelJugarMouseClicked
         // TODO add your handling code here:
-        if (gamescreen == null) {
-            gamescreen = new JFrameGameScreen();
-            //gamescreen.setPresentacion(this);
-        }
-        gamescreen.setVisible(true);
+        JFrameRegistro registro = new JFrameRegistro();
+        registro.setVisible(true);
         this.setVisible(false);
-    }//GEN-LAST:event_jButtonIrJuegoActionPerformed
+    }//GEN-LAST:event_jLabelJugarMouseClicked
 
-    private void jButtonInstruccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInstruccionActionPerformed
-        // TODO add your handling code here:
-        if (instruccion == null) {
-            instruccion = new JFrameInstrucciones();
-            instruccion.setPresentacion(this);
-        }
-        instruccion.setVisible(true);
-        this.setVisible(false);
-    }//GEN-LAST:event_jButtonInstruccionActionPerformed
-
-    private void jButtonCreditoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCreditoActionPerformed
+    private void jLabelCreditosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelCreditosMouseClicked
         // TODO add your handling code here:
         if (creditos == null) {
             creditos = new JFrameCreditos();
@@ -160,12 +201,23 @@ public class JFramePresentacion extends javax.swing.JFrame {
         }
         creditos.setVisible(true);
         this.setVisible(false);
-    }//GEN-LAST:event_jButtonCreditoActionPerformed
+    }//GEN-LAST:event_jLabelCreditosMouseClicked
 
-    private void jButtonInformacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInformacionActionPerformed
+    private void jLabelRegistrosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelRegistrosMouseClicked
         // TODO add your handling code here:
-        
-    }//GEN-LAST:event_jButtonInformacionActionPerformed
+        BaseDeDatos base = new BaseDeDatos();
+        base.setVisible(true);
+    }//GEN-LAST:event_jLabelRegistrosMouseClicked
+
+    private void jLabelInstruccionesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelInstruccionesMouseClicked
+        // TODO add your handling code here:
+        if (instruccion == null) {
+            instruccion = new JFrameInstrucciones();
+            instruccion.setPresentacion(this);
+        }
+        instruccion.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_jLabelInstruccionesMouseClicked
 
     /**
      * @param args the command line arguments
@@ -204,13 +256,23 @@ public class JFramePresentacion extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonCredito;
-    private javax.swing.JButton jButtonInformacion;
-    private javax.swing.JButton jButtonInstruccion;
-    private javax.swing.JButton jButtonIrJuego;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabelCreditos;
+    private javax.swing.JLabel jLabelInstrucciones;
+    private javax.swing.JLabel jLabelJugar;
     private javax.swing.JLabel jLabelPortada;
+    private javax.swing.JLabel jLabelPortada1;
+    private javax.swing.JLabel jLabelRegistros;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

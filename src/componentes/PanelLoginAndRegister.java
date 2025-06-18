@@ -8,6 +8,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.Window;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -16,8 +17,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
 import pantallas.ConexionBD;
+import pantallas.JFrameGameScreen;
 import pantallas.JFrameRegistro;
 import pantallas.Jugador;
 
@@ -166,15 +169,38 @@ private PanelCover panelCover; // Agrega esta variable
     jugarBtn.setForeground(Color.WHITE);
     jugarBtn.setText("Jugar YA!");
     register.add(jugarBtn, "sizegroup btn, w 200, h 50");
-
-   crearPerfilBtn.addActionListener(e -> {
+    crearPerfilBtn.addActionListener(e -> {
     String nickname = nicknameField.getText().trim();
     String edad = edadField.getText().trim();
+
     if (nickname.isEmpty() || edad.isEmpty() || selectedAvatar == null) {
         JOptionPane.showMessageDialog(
             register,
             "Por favor, completa todos los campos y selecciona un avatar.",
             "Datos incompletos",
+            JOptionPane.WARNING_MESSAGE
+        );
+        return;
+    }
+
+    // Validar que edad sea un número válido y positivo
+    int edadNumero;
+    try {
+        edadNumero = Integer.parseInt(edad);
+        if (edadNumero <= 0) {
+            JOptionPane.showMessageDialog(
+                register,
+                "La edad debe ser un número mayor a 0.",
+                "Edad inválida",
+                JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(
+            register,
+            "Por favor, escribe un número válido en el campo de edad.",
+            "Edad inválida",
             JOptionPane.WARNING_MESSAGE
         );
         return;
@@ -209,12 +235,12 @@ private PanelCover panelCover; // Agrega esta variable
     });
 
     jugarBtn.addActionListener(e -> {
-        JOptionPane.showMessageDialog(
-            register,
-            "Aquí podrías lanzar la lógica del juego.",
-            "Jugar YA",
-            JOptionPane.INFORMATION_MESSAGE
-        );
+        String nickname = nicknameField.getText().trim();
+        jugador = ConexionBD.buscarPorNombre(nickname);
+        JFrameGameScreen gameScreen = new JFrameGameScreen(jugador);
+        gameScreen.setVisible(true);
+        Window window = SwingUtilities.getWindowAncestor(this);
+        if (window != null) window.dispose();
     });
 
     leftArrowBtn.addActionListener(e -> {
@@ -276,8 +302,8 @@ private void updateAvatars() {
         cmd.setText("DESCUBRIR");
         login.add(cmd, "Gapy 30, w 30%, h 50");
         cmd.addActionListener(e -> {
-    String nickname = txtEmail.getText().trim();
-    jugador = ConexionBD.buscarPorNombre(nickname);
+        String nickname = txtEmail.getText().trim();
+        jugador = ConexionBD.buscarPorNombre(nickname);
 
     if (nickname.isEmpty()) {
         JOptionPane.showMessageDialog(
@@ -290,11 +316,14 @@ private void updateAvatars() {
         if (jugador != null) {
             JOptionPane.showMessageDialog(
                 login,
-                "¡Hola, " + jugador.getNickname() + "! \n Disfruta ek juego",
+                "¡Hola, " + jugador.getNickname() + "! \n Disfruta el juego",
                 "Bienvenido",
                 JOptionPane.INFORMATION_MESSAGE
             );
-            // Aquí podrías lanzar la lógica del juego
+            JFrameGameScreen gameScreen = new JFrameGameScreen(jugador);
+            gameScreen.setVisible(true);
+            Window window = SwingUtilities.getWindowAncestor(this);
+            if (window != null) window.dispose();
         } else {
             int opcion = JOptionPane.showConfirmDialog(
                 login,
