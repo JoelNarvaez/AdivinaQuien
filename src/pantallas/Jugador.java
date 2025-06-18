@@ -4,6 +4,7 @@
  */
 package pantallas;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.sql.Time;
 
@@ -12,7 +13,9 @@ import java.sql.Time;
  *
  * @author Joel
  */
-public class Jugador {
+public class Jugador implements Serializable{
+    private static final long serialVersionUID = 1L;
+    
     //Datos del jugador
     private int id;
     private String nickname;
