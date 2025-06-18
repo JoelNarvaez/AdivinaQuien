@@ -50,61 +50,61 @@ public class JFramePresentacion extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabelPortada = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        jPanelPrincipal = new javax.swing.JPanel();
+        jLabelTitulo1 = new javax.swing.JLabel();
+        jLabelLamparaGif = new javax.swing.JLabel();
+        jLabelTitulo2 = new javax.swing.JLabel();
+        jLabelTitulo1Sombra = new javax.swing.JLabel();
+        jLabelTitulo2Sombra = new javax.swing.JLabel();
         jLabelInstrucciones = new javax.swing.JLabel();
         jLabelRegistros = new javax.swing.JLabel();
         jLabelCreditos = new javax.swing.JLabel();
         jLabelJugar = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        jLabelNube6 = new javax.swing.JLabel();
+        jLabelNube1 = new javax.swing.JLabel();
+        jLabelNube2 = new javax.swing.JLabel();
+        jLabellNube3 = new javax.swing.JLabel();
+        jLabelNube4 = new javax.swing.JLabel();
+        jLabelNube5 = new javax.swing.JLabel();
+        jLabelTituloDisney = new javax.swing.JLabel();
         jLabelPortada1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setSize(new java.awt.Dimension(1920, 1080));
         getContentPane().setLayout(null);
 
-        jPanel1.setBackground(new java.awt.Color(163, 208, 241));
-        jPanel1.setLayout(null);
+        jPanelPrincipal.setBackground(new java.awt.Color(163, 208, 241));
+        jPanelPrincipal.setLayout(null);
 
-        jLabel4.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel4.setFont(new java.awt.Font("Comic Sans MS", 1, 150)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("¿ A D I V I N A");
-        jPanel1.add(jLabel4);
-        jLabel4.setBounds(310, 150, 1380, 250);
+        jLabelTitulo1.setBackground(new java.awt.Color(255, 255, 255));
+        jLabelTitulo1.setFont(new java.awt.Font("Comic Sans MS", 1, 150)); // NOI18N
+        jLabelTitulo1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelTitulo1.setText("¿ A D I V I N A");
+        jPanelPrincipal.add(jLabelTitulo1);
+        jLabelTitulo1.setBounds(310, 150, 1380, 250);
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/lamparaPixar.gif"))); // NOI18N
-        jPanel1.add(jLabel1);
-        jLabel1.setBounds(690, 280, 482, 331);
+        jLabelLamparaGif.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/lamparaPixar.gif"))); // NOI18N
+        jPanelPrincipal.add(jLabelLamparaGif);
+        jLabelLamparaGif.setBounds(690, 280, 482, 331);
 
-        jLabel2.setFont(new java.awt.Font("Comic Sans MS", 1, 150)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Q U  É N ?");
-        jPanel1.add(jLabel2);
-        jLabel2.setBounds(560, 350, 1020, 250);
+        jLabelTitulo2.setFont(new java.awt.Font("Comic Sans MS", 1, 150)); // NOI18N
+        jLabelTitulo2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelTitulo2.setText("Q U  É N ?");
+        jPanelPrincipal.add(jLabelTitulo2);
+        jLabelTitulo2.setBounds(560, 350, 1020, 250);
 
-        jLabelPortada.setBackground(new java.awt.Color(255, 255, 255));
-        jLabelPortada.setFont(new java.awt.Font("Comic Sans MS", 1, 150)); // NOI18N
-        jLabelPortada.setForeground(new java.awt.Color(153, 153, 153));
-        jLabelPortada.setText("¿ A D I V I N A ");
-        jPanel1.add(jLabelPortada);
-        jLabelPortada.setBounds(300, 170, 2506, 210);
+        jLabelTitulo1Sombra.setBackground(new java.awt.Color(255, 255, 255));
+        jLabelTitulo1Sombra.setFont(new java.awt.Font("Comic Sans MS", 1, 150)); // NOI18N
+        jLabelTitulo1Sombra.setForeground(new java.awt.Color(153, 153, 153));
+        jLabelTitulo1Sombra.setText("¿ A D I V I N A ");
+        jPanelPrincipal.add(jLabelTitulo1Sombra);
+        jLabelTitulo1Sombra.setBounds(300, 170, 2506, 210);
 
-        jLabel3.setFont(new java.awt.Font("Comic Sans MS", 1, 150)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(153, 153, 153));
-        jLabel3.setText("Q U  É N ?");
-        jPanel1.add(jLabel3);
-        jLabel3.setBounds(550, 330, 990, 280);
+        jLabelTitulo2Sombra.setFont(new java.awt.Font("Comic Sans MS", 1, 150)); // NOI18N
+        jLabelTitulo2Sombra.setForeground(new java.awt.Color(153, 153, 153));
+        jLabelTitulo2Sombra.setText("Q U  É N ?");
+        jPanelPrincipal.add(jLabelTitulo2Sombra);
+        jLabelTitulo2Sombra.setBounds(550, 330, 990, 280);
 
         jLabelInstrucciones.setBackground(new java.awt.Color(204, 204, 255));
         jLabelInstrucciones.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/pelotaInstrucciones.png"))); // NOI18N
@@ -115,7 +115,7 @@ public class JFramePresentacion extends javax.swing.JFrame {
                 jLabelInstruccionesMouseClicked(evt);
             }
         });
-        jPanel1.add(jLabelInstrucciones);
+        jPanelPrincipal.add(jLabelInstrucciones);
         jLabelInstrucciones.setBounds(240, 640, 290, 290);
 
         jLabelRegistros.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/Registros.png"))); // NOI18N
@@ -124,7 +124,7 @@ public class JFramePresentacion extends javax.swing.JFrame {
                 jLabelRegistrosMouseClicked(evt);
             }
         });
-        jPanel1.add(jLabelRegistros);
+        jPanelPrincipal.add(jLabelRegistros);
         jLabelRegistros.setBounds(710, 650, 130, 250);
 
         jLabelCreditos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/casaCreditos.png"))); // NOI18N
@@ -133,7 +133,7 @@ public class JFramePresentacion extends javax.swing.JFrame {
                 jLabelCreditosMouseClicked(evt);
             }
         });
-        jPanel1.add(jLabelCreditos);
+        jPanelPrincipal.add(jLabelCreditos);
         jLabelCreditos.setBounds(1000, 640, 180, 282);
 
         jLabelJugar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/naveJugar.png"))); // NOI18N
@@ -142,39 +142,39 @@ public class JFramePresentacion extends javax.swing.JFrame {
                 jLabelJugarMouseClicked(evt);
             }
         });
-        jPanel1.add(jLabelJugar);
+        jPanelPrincipal.add(jLabelJugar);
         jLabelJugar.setBounds(1350, 670, 330, 250);
 
-        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
-        jPanel1.add(jLabel7);
-        jLabel7.setBounds(1580, 40, 150, 110);
+        jLabelNube6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
+        jPanelPrincipal.add(jLabelNube6);
+        jLabelNube6.setBounds(1580, 40, 150, 110);
 
-        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
-        jPanel1.add(jLabel8);
-        jLabel8.setBounds(130, 40, 150, 110);
+        jLabelNube1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
+        jPanelPrincipal.add(jLabelNube1);
+        jLabelNube1.setBounds(130, 40, 150, 110);
 
-        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
-        jPanel1.add(jLabel9);
-        jLabel9.setBounds(330, 40, 150, 110);
+        jLabelNube2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
+        jPanelPrincipal.add(jLabelNube2);
+        jLabelNube2.setBounds(330, 40, 150, 110);
 
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
-        jPanel1.add(jLabel10);
-        jLabel10.setBounds(520, 40, 150, 110);
+        jLabellNube3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
+        jPanelPrincipal.add(jLabellNube3);
+        jLabellNube3.setBounds(520, 40, 150, 110);
 
-        jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
-        jPanel1.add(jLabel12);
-        jLabel12.setBounds(1190, 40, 150, 110);
+        jLabelNube4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
+        jPanelPrincipal.add(jLabelNube4);
+        jLabelNube4.setBounds(1190, 40, 150, 110);
 
-        jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
-        jPanel1.add(jLabel13);
-        jLabel13.setBounds(1380, 40, 150, 110);
+        jLabelNube5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nube.png"))); // NOI18N
+        jPanelPrincipal.add(jLabelNube5);
+        jLabelNube5.setBounds(1380, 40, 150, 110);
 
-        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/disneyTitulo.png"))); // NOI18N
-        jPanel1.add(jLabel5);
-        jLabel5.setBounds(790, 50, 300, 120);
+        jLabelTituloDisney.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/disneyTitulo.png"))); // NOI18N
+        jPanelPrincipal.add(jLabelTituloDisney);
+        jLabelTituloDisney.setBounds(790, 50, 300, 120);
 
-        getContentPane().add(jPanel1);
-        jPanel1.setBounds(30, 0, 1960, 1030);
+        getContentPane().add(jPanelPrincipal);
+        jPanelPrincipal.setBounds(30, 0, 1960, 1030);
 
         jLabelPortada1.setBackground(new java.awt.Color(255, 255, 255));
         jLabelPortada1.setFont(new java.awt.Font("Comic Sans MS", 1, 150)); // NOI18N
@@ -256,23 +256,23 @@ public class JFramePresentacion extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JLabel jLabelCreditos;
     private javax.swing.JLabel jLabelInstrucciones;
     private javax.swing.JLabel jLabelJugar;
-    private javax.swing.JLabel jLabelPortada;
+    private javax.swing.JLabel jLabelLamparaGif;
+    private javax.swing.JLabel jLabelNube1;
+    private javax.swing.JLabel jLabelNube2;
+    private javax.swing.JLabel jLabelNube4;
+    private javax.swing.JLabel jLabelNube5;
+    private javax.swing.JLabel jLabelNube6;
     private javax.swing.JLabel jLabelPortada1;
     private javax.swing.JLabel jLabelRegistros;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel jLabelTitulo1;
+    private javax.swing.JLabel jLabelTitulo1Sombra;
+    private javax.swing.JLabel jLabelTitulo2;
+    private javax.swing.JLabel jLabelTitulo2Sombra;
+    private javax.swing.JLabel jLabelTituloDisney;
+    private javax.swing.JLabel jLabellNube3;
+    private javax.swing.JPanel jPanelPrincipal;
     // End of variables declaration//GEN-END:variables
 }

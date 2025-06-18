@@ -38,6 +38,8 @@ public class JFrameAnimo extends javax.swing.JFrame {
         jButtonCerrar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(1920, 1080));
+        setSize(new java.awt.Dimension(1920, 1080));
 
         jLabelAnimo.setFont(new java.awt.Font("Bahnschrift", 0, 36)); // NOI18N
         jLabelAnimo.setText("Animo");
@@ -60,14 +62,14 @@ public class JFrameAnimo extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jButtonCerrar)
                         .addGap(10, 10, 10)))
-                .addContainerGap(291, Short.MAX_VALUE))
+                .addContainerGap(1217, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addComponent(jLabelAnimo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 187, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 619, Short.MAX_VALUE)
                 .addComponent(jButtonCerrar)
                 .addGap(171, 171, 171))
         );
