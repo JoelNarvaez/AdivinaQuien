@@ -213,7 +213,7 @@ public class JFramePresentacion extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (instruccion == null) {
             instruccion = new JFrameInstrucciones();
-            instruccion.setPresentacion(this);
+            //instruccion.setPresentacion(this);
         }
         instruccion.setVisible(true);
         this.setVisible(false);

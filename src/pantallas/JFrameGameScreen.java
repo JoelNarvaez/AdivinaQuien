@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 import javax.swing.Timer;
+import javax.swing.border.EmptyBorder;
 import net.miginfocom.swing.MigLayout;
 import static pantallas.PersonajeDisney.elegirPersonajesAleatorios;
 
@@ -257,97 +258,148 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         topPanel.setPreferredSize(new Dimension(0, 70));
 
         Button salirBtn = new Button();
-        salirBtn.setText("  ?  ");
-        salirBtn.setFont(new Font("Arial", Font.BOLD, 14));
-        salirBtn.setBackground(Color.RED);
+        salirBtn.setText(" ? ");
+        salirBtn.setFont(new Font("Arial", Font.BOLD, 18));
         salirBtn.setForeground(Color.WHITE);
+        salirBtn.setBackground(Color.RED);
+        salirBtn.setFocusPainted(false);
+        salirBtn.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+        salirBtn.setPreferredSize(new Dimension(45, 45));
+        salirBtn.setContentAreaFilled(true);
+        salirBtn.setOpaque(true);
+        salirBtn.setBorderPainted(false);
+
+        // Redondo
+        salirBtn.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
+            @Override
+            public void paint(Graphics g, JComponent c) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(salirBtn.getBackground());
+                g2.fillOval(0, 0, c.getWidth(), c.getHeight());
+                super.paint(g2, c);
+                g2.dispose();
+            }
+        });
 
         salirBtn.addActionListener(e -> {
             JDialog dialogo = new JDialog((JFrame) SwingUtilities.getWindowAncestor(salirBtn), "Opciones del juego", true);
-            dialogo.setSize(220, 370);
-            dialogo.getContentPane().setBackground(btnColor);
-            dialogo.setLayout(new BorderLayout());
+            dialogo.setSize(350, 490);
+            dialogo.setUndecorated(false);
 
-            JPanel contenedor = new JPanel();
-            contenedor.setBackground(azulMedio); 
-            contenedor.setLayout(new BoxLayout(contenedor, BoxLayout.Y_AXIS));
-            contenedor.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
-
-            String[][] opciones = {
-                {"musica.png", "Música"},
-                {"menu.png", "Perfil"},
-                {"pelota.png", "Instrucciones"},
-                {"menu.png", "Menú"},
-                {"cancelar.png", "Cancelar"}
+            // Panel con imagen de fondo
+            JPanel fondoPanel = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    ImageIcon fondo = new ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/fondoMenu.png"));
+                    g.drawImage(fondo.getImage(), 0, 0, getWidth(), getHeight(), this);
+                }
             };
+            fondoPanel.setLayout(new BoxLayout(fondoPanel, BoxLayout.Y_AXIS));
 
-            for (String[] opcion : opciones) {
-                String ruta = "/Imagenes/disenoPantallas/" + opcion[0];
-                String texto = opcion[1];
+            fondoPanel.add(Box.createVerticalStrut(90)); 
 
-                JPanel opcionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-                opcionPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-                opcionPanel.setOpaque(false);
-                opcionPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // margen interno
 
-                JButton btn = new JButton();
-                btn.setPreferredSize(new Dimension(40, 40));
-                btn.setMaximumSize(new Dimension(40, 40));
-                btn.setMinimumSize(new Dimension(40, 40));
-                btn.setContentAreaFilled(false);
-                btn.setFocusPainted(false);
-                btn.setBorderPainted(false);
+        JPanel botonesPanel = new JPanel();
+        botonesPanel.setOpaque(false);
+        botonesPanel.setLayout(new BoxLayout(botonesPanel, BoxLayout.Y_AXIS));
+        botonesPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-                java.net.URL url = getClass().getResource(ruta);
-                if (url != null) {
-                    ImageIcon icono = new ImageIcon(url);
-                    Image img = icono.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-                    btn.setIcon(new ImageIcon(img));
-                }
+        JPanel gridPanel = new JPanel(new GridLayout(2, 2, 20, 20));
+        gridPanel.setOpaque(false);
+        gridPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-                JLabel etiqueta = new JLabel(texto);
-                etiqueta.setFont(new Font("Cambria", Font.BOLD, 18));
-                etiqueta.setForeground(Color.BLACK);
+        JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelInferior.setOpaque(false);
+        panelInferior.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-                opcionPanel.add(btn);
-                opcionPanel.add(etiqueta);
+        // Botones con sus iconos y etiquetas
+        String[][] botones = {
+            {"musica.png", "Música"},
+            {"ins.png", "Instrucciones"},
+            {"menu.png", "Menú"},
+            {"cancelar.png", "Cancelar"}
+        };
 
-                switch (texto) {
-                    case "Música":
-                        btn.addActionListener(ev -> {
-                            // pausarMusica();
-                            dialogo.dispose();
-                        });
-                        break;
-                    case "Perfil":
-                        btn.addActionListener(ev -> {
-                            // mostrarPerfil();
-                            dialogo.dispose();
-                        });
-                        break;
-                    case "Instrucciones":
-                        btn.addActionListener(ev -> {
-                            // mostrarInstrucciones();
-                            dialogo.dispose();
-                        });
-                        break;
-                    case "Menú":
-                        btn.addActionListener(ev -> {
-                            // irAlMenuPrincipal();
-                            dialogo.dispose();
-                        });
-                        break;
-                    case "Cancelar":
-                        btn.addActionListener(ev -> dialogo.dispose());
-                        break;
-                }
+        for (int i = 0; i < botones.length; i++) {
+            String ruta = "/Imagenes/disenoPantallas/" + botones[i][0];
+            String texto = botones[i][1];
 
-                contenedor.add(opcionPanel);
+            JPanel panelBoton = new JPanel();
+            panelBoton.setLayout(new BoxLayout(panelBoton, BoxLayout.Y_AXIS));
+            panelBoton.setOpaque(false);
+            panelBoton.setAlignmentX(Component.CENTER_ALIGNMENT);
+            panelBoton.setAlignmentY(Component.CENTER_ALIGNMENT);
+            panelBoton.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0)); 
+
+            JButton btn = new JButton();
+            btn.setPreferredSize(new Dimension(60, 60));
+            btn.setMaximumSize(new Dimension(60, 60));
+            btn.setMinimumSize(new Dimension(60, 60));
+            btn.setBorder(new EmptyBorder(5, 5, 5, 5));
+            btn.setBorderPainted(false);
+            btn.setContentAreaFilled(false);
+            btn.setFocusPainted(false);
+            btn.setOpaque(false);
+            btn.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            java.net.URL url = getClass().getResource(ruta);
+            if (url != null) {
+                ImageIcon icono = new ImageIcon(url);
+                Image img = icono.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
+                btn.setIcon(new ImageIcon(img));
             }
 
-            dialogo.add(contenedor, BorderLayout.CENTER);
-            dialogo.setLocationRelativeTo(salirBtn);
-            dialogo.setVisible(true);
+            JLabel etiqueta = new JLabel(texto, JLabel.CENTER);
+            etiqueta.setFont(new Font("Comic Sans MS", Font.BOLD, 14));
+            etiqueta.setForeground(Color.BLACK);
+            etiqueta.setAlignmentX(Component.CENTER_ALIGNMENT);
+            etiqueta.setMaximumSize(new Dimension(110, 20));
+            etiqueta.setHorizontalAlignment(SwingConstants.CENTER);
+            
+            // eventos
+            switch (texto) {
+                case "Instrucciones" -> btn.addActionListener(ev ->{
+                        dialogo.dispose();
+
+                        JFrameInstrucciones instru = new JFrameInstrucciones();
+
+                        instru.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                        instru.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+                        instru.setAlwaysOnTop(true);
+                        instru.setVisible(true);
+                        instru.toFront();               
+                        instru.requestFocusInWindow(); 
+
+                        instru.setAlwaysOnTop(false);
+                });
+                case "Cancelar" -> btn.addActionListener(ev -> dialogo.dispose());
+            }
+            panelBoton.add(btn);
+            panelBoton.add(Box.createVerticalStrut(10));
+            panelBoton.add(etiqueta);
+
+            if (i < 4) {
+                gridPanel.add(panelBoton);
+            } else {
+                panelInferior.add(panelBoton);
+            }
+        }
+
+        panelInferior.setMaximumSize(gridPanel.getMaximumSize());
+        panelInferior.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        botonesPanel.add(gridPanel);
+        botonesPanel.add(Box.createVerticalStrut(10)); 
+        botonesPanel.add(panelInferior);
+
+        fondoPanel.add(botonesPanel);
+        dialogo.setContentPane(fondoPanel);
+        dialogo.setLocationRelativeTo(salirBtn);
+        dialogo.setVisible(true);
+
         });
 
         JPanel leftTopPanel = new JPanel();
