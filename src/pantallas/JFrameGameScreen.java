@@ -9,14 +9,22 @@ import Estilos.MyTextField;
 import Estilos.RoundedTextField;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Random;
 import javax.swing.Timer;
 import net.miginfocom.swing.MigLayout;
 import static pantallas.PersonajeDisney.elegirPersonajesAleatorios;
+import pantallas.ConexionBD; // o donde esté el método insertarPartida
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+
 
 
 
@@ -32,7 +40,21 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     private boolean[] cartaGirada = new boolean[24];
     private boolean personajeYaSeleccionadoEnBienvenida = false;
     private Jugador jugador;
-    private JLabel personajeLabel;      
+    private JLabel personajeLabel; 
+    private Cliente cliente;
+    private boolean esMiTurno = false;
+    private JLabel turnoLabel;
+    private JTextArea areaPreguntas;
+    private boolean deboResponder = false;
+    private boolean esPrimerTurno = true;
+    private JComboBox<String> preguntasCombo;
+    private RoundedTextField preguntaInput;
+    private Button enviarBtn;
+    private PersonajeDisney miPersonajeSecreto;
+    private int intentosRestantes = 3;
+    private JLabel intentos;
+    private String oponente;
+    boolean gano = false;
 
        
     public JFrameGameScreen(){
@@ -57,9 +79,11 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     }
 }
     
-    public JFrameGameScreen(Jugador jugador, PersonajeDisney[] personajes) { //añadir ademas de jugador un vector de PersonajeDisney de tamaño 24 que sea igual en los dos jugadores (supongo generalo en servidor)
+   public JFrameGameScreen(Jugador jugador, PersonajeDisney[] seleccionados, Cliente cliente, String nombreOponente) {
     this.jugador = jugador;
-    this.seleccionados = personajes; //aqui solo se hizo eso porque antes se utilizaba seleccionados pero local ahora se renueva con el constructor
+    this.seleccionados = seleccionados;
+    this.cliente = cliente;
+    this.oponente = nombreOponente;
     setTitle("Adivina Quién"); 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -152,7 +176,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     continuar.setFont(new Font("Century Gothic", Font.BOLD, 24));
     continuar.setBackground(new Color(255, 153, 0));
     continuar.setForeground(Color.WHITE);
-    continuar.setText("Contunuar");
+    continuar.setText("Continuar");
     bienvenidaPanel.add(continuar, "split 2, sizegroup btn, gapx 20, gapy 0, w 200, h 45, gapy 30");
 
     // Jugar YA button
@@ -160,7 +184,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     pantalla.setFont(new Font("Century Gothic", Font.BOLD, 20));
     pantalla.setBackground(new Color(204, 102, 255));
     pantalla.setForeground(Color.WHITE);
-    pantalla.setText("Ecoger en tablero");
+    pantalla.setText("Escoger en tablero");
     bienvenidaPanel.add(pantalla, "sizegroup btn, w 200, h 45, gapy 30");
 
     // --------- Lógica ---------
@@ -173,6 +197,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     mostrarImagenSeleccionada(personajeAleatorio, lblImagen, 250, 250);
     mostrarImagenSeleccionada(personajeAleatorio, personajeImagen, 200, 200);
     personajeLabel.setText("Eres: " + personajeAleatorio.getNombre());
+    miPersonajeSecreto = personajeAleatorio;
     personajeYaSeleccionadoEnBienvenida = true; // <--- NUEVO
 
     lblEscogiendo.setVisible(true);
@@ -198,6 +223,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     mostrarImagenSeleccionada(seleccionado, lblImagenCombo, 250, 250);
     mostrarImagenSeleccionada(seleccionado, personajeImagen, 200, 200);
     personajeLabel.setText("Eres: " + seleccionado.getNombre());
+    miPersonajeSecreto = seleccionado;
     personajeYaSeleccionadoEnBienvenida = true; // <--- NUEVO
     });
 
@@ -211,12 +237,31 @@ public class JFrameGameScreen extends javax.swing.JFrame {
 
     // Acción para cambiar de pantalla al tablero
     continuar.addActionListener(e -> {
-        CardLayout c = (CardLayout) (cards.getLayout());
-        c.show(cards, "Juego");
-        // Ya se eligió personaje, no pedir selección ni permitir seleccionar en el tablero
-        faseSeleccion = false;
-        seleccionHecha = true; // así el tablero ya no permite escoger personaje
-    });
+    // Validar que al menos un radio button esté seleccionado
+    if (!rbAleatorio.isSelected() && !rbNombre.isSelected()) {
+        JOptionPane.showMessageDialog(this,
+                "Debes seleccionar una opción: Aleatorio o Escoger por nombre.",
+                "Opción no seleccionada",
+                JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    // Validar que ya se haya elegido un personaje
+    if (miPersonajeSecreto == null) {
+        JOptionPane.showMessageDialog(this,
+                "Debes confirmar tu personaje antes de continuar.",
+                "Personaje no seleccionado",
+                JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    // Pasar al juego
+    CardLayout c = (CardLayout) (cards.getLayout());
+    c.show(cards, "Juego");
+    faseSeleccion = false;
+    seleccionHecha = true;
+});
+
     
     pantalla.addActionListener(e -> {
         CardLayout c = (CardLayout) (cards.getLayout());
@@ -236,6 +281,20 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     setVisible(true);
 
     }
+   
+   public void marcarMiTurno() {
+   esMiTurno = true;
+    SwingUtilities.invokeLater(() -> {
+        turnoLabel.setText("¡Es tu turno!");
+        // Sonido o animación opcional
+        Toolkit.getDefaultToolkit().beep();
+    });
+   }
+
+   public void marcarEspera() {
+       esMiTurno = false;
+       SwingUtilities.invokeLater(() -> turnoLabel.setText("Esperando turno..."));
+   }
 
     private JPanel crearPanelJuego() {
         JPanel mainPanel = new JPanel(new BorderLayout());
@@ -258,6 +317,10 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         Timer timer = new Timer(1000, e -> actualizarFechaHora());
         timer.start();
 
+        intentos = new JLabel("Intentos: " + Integer.toString(intentosRestantes));
+        intentos.setFont(new Font("Century Gothic", Font.BOLD, 16));
+        intentos.setForeground(Color.BLACK);
+        
         cronometroLabel = new JLabel("Tiempo: 00:00");
         cronometroLabel.setFont(new Font("Arial", Font.BOLD, 16));
         cronometroLabel.setForeground(Color.WHITE);
@@ -432,6 +495,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 if (faseSeleccion && !seleccionHecha) {
                     if (personajeButtons[idx].getClientProperty("personaje") == null) return;
                     PersonajeDisney seleccionado = (PersonajeDisney) personajeButtons[idx].getClientProperty("personaje");
+                    miPersonajeSecreto = seleccionado; // ← GUARDAR EL PERSONAJE SECRETO
                     mostrarImagenSeleccionada(seleccionado, personajeImagen, 200, 200);
                     personajeLabel.setText("Eres: " + seleccionado.getNombre());
                     for (JButton btn : personajeButtons) btn.setEnabled(false);
@@ -507,13 +571,49 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         adivinarBtnTop.setForeground(Color.WHITE);
         adivinarBtnTop.setPreferredSize(new Dimension(100, 30));
         adivinarBtnTop.setMaximumSize(new Dimension(100, 30));
+        
+        adivinarBtnTop.addActionListener(e -> {
+            if (!esMiTurno || (!esPrimerTurno && !deboResponder)){
+                JOptionPane.showMessageDialog(this, "Primero responde la pregunta del oponente.");
+                return;
+            }
 
+            PersonajeDisney seleccionado = (PersonajeDisney) personajeCombo.getSelectedItem();
+            if (seleccionado == null) {
+                JOptionPane.showMessageDialog(this, "Selecciona un personaje.");
+                return;
+            }
+
+            // Restar intento
+            intentosRestantes--;
+            intentos.setText("Intentos restantes: " + intentosRestantes);
+            String nombre = seleccionado.getNombre();
+            cliente.enviarMensaje("adivinar:" + nombre);
+            areaPreguntas.append("Tú (adivinaste): ¿Es " + nombre + "?\n");
+            
+            
+
+            // No termina turno aún, espera respuesta del oponente
+            habilitarPregunta(false);
+            esMiTurno = false;
+            cliente.enviarMensaje("turnoFinalizado");
+            
+            if (intentosRestantes == 0) {
+                areaPreguntas.append("Tú: Te acabste tus 3 intentos");
+                mostrarPantallaAnimo();
+                cliente.enviarMensaje("¡Ganaste!");
+                registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
+                actualizarDatosJugador(jugador, gano, intentosRestantes, miPersonajeSecreto.getNombre());
+            }
+        });
+        
         JPanel rightTopPanel = new JPanel();
         rightTopPanel.setLayout(new BoxLayout(rightTopPanel, BoxLayout.X_AXIS));
         rightTopPanel.setBackground(azulFuerte);
         rightTopPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 20));
-
         rightTopPanel.add(Box.createHorizontalGlue());
+        rightTopPanel.add(intentos);
+        rightTopPanel.add(Box.createHorizontalStrut(23));
         rightTopPanel.add(personajeCombo);
         rightTopPanel.add(Box.createHorizontalStrut(15));
         rightTopPanel.add(adivinarBtnTop);
@@ -561,18 +661,17 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         rightPanel.add(contenidoDerecho, BorderLayout.NORTH);
         
         JLabel nicknameLabel = new JLabel("Nickname: " + jugador.getNickname());
-        JLabel turnoLabel = new JLabel("Es tu turno");
+        turnoLabel = new JLabel("");
         personajeLabel = new JLabel("Eres: " );
         nicknameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         turnoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         personajeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         personajeImagen = new JLabel();
         personajeImagen.setPreferredSize(new Dimension(200, 200));
         personajeImagen.setMaximumSize(new Dimension(200, 200));
         personajeImagen.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         personajeImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
-
+        
         Font labelFont = new Font("Arial", Font.BOLD, 18);
         Color labelColor = Color.WHITE;
         for (JLabel label : new JLabel[]{nicknameLabel, turnoLabel, personajeLabel}) {
@@ -582,29 +681,45 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         }
         personajeImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JComboBox<String> preguntasCombo = new JComboBox<>();
+        preguntasCombo = new JComboBox<>();
             for (String pregunta : ConexionBD.obtenerPreguntasActivas()) {
                 preguntasCombo.addItem(pregunta);
             }
         preguntasCombo.setFont(new Font("Arial", Font.BOLD, 14));
         preguntasCombo.setMaximumSize(new Dimension(300, 35));
         preguntasCombo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
 
-        JTextArea areaPreguntas = new JTextArea(10, 25);
-        areaPreguntas.setFont(new Font("Arial", Font.PLAIN, 14));
+                // Crear el área de texto
+        areaPreguntas = new JTextArea(10, 40);
+        areaPreguntas.setText("Tu oponente es: " + oponente + "\n\n");
+        areaPreguntas.setFont(new Font("Century Gothic", Font.PLAIN, 14));
         areaPreguntas.setLineWrap(true);
         areaPreguntas.setWrapStyleWord(true);
+        areaPreguntas.setEditable(false); // ← buena práctica para mostrar mensajes
         areaPreguntas.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1, true));
-        areaPreguntas.setMaximumSize(new Dimension(300, 200));
-        areaPreguntas.setPreferredSize(new Dimension(300, 200));
-        areaPreguntas.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Crear el scroll pane
+        JScrollPane scrollPreguntas = new JScrollPane(areaPreguntas);
+        scrollPreguntas.setMaximumSize(new Dimension(1000, 500));
+        scrollPreguntas.setPreferredSize(new Dimension(1000, 500));
+        scrollPreguntas.setAlignmentX(Component.CENTER_ALIGNMENT);
+        scrollPreguntas.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPreguntas.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         
-        RoundedTextField preguntaInput = new RoundedTextField(25);
+        preguntaInput = new RoundedTextField(25);
         preguntaInput.setFont(new Font("Arial", Font.PLAIN, 14));
         preguntaInput.setMaximumSize(new Dimension(180, 40));
+        
+        preguntasCombo.addActionListener(e -> {
+            String seleccionada = (String) preguntasCombo.getSelectedItem();
+            if (seleccionada != null) {
+                preguntaInput.setText(seleccionada);
+            }
+        });
 
-        Button enviarBtn = new Button();
-        enviarBtn.setText("Enviar");
+        enviarBtn = new Button();
+        enviarBtn.setText("  Enviar  ");
         enviarBtn.setFont(new Font("Arial", Font.BOLD, 14));
         enviarBtn.setBackground(new Color(0xB1, 0x67, 0xD1));
         enviarBtn.setForeground(Color.WHITE);
@@ -618,27 +733,79 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         enviarPanel.add(Box.createHorizontalStrut(10));
         enviarPanel.add(enviarBtn);
 
-        Button siBtn = new Button();
-        Button noBtn = new Button();
-        siBtn.setText("Si");
-        noBtn.setText("No");
-        siBtn.setFont(new Font("Arial", Font.BOLD, 14));
-        noBtn.setFont(new Font("Arial", Font.BOLD, 14));
-        siBtn.setBackground(new Color(0x74, 0xE6, 0x86));
-        noBtn.setBackground(new Color(0xFF, 0x70, 0x70));
-        siBtn.setPreferredSize(new Dimension(80,35));
-        noBtn.setPreferredSize(new Dimension(80,35));
+        enviarBtn.addActionListener(e -> {
+    if (!esMiTurno) {
+        JOptionPane.showMessageDialog(this, "Espera tu turno.");
+        return;
+    }
 
-        JPanel botonesPanel = new JPanel();
-        botonesPanel.setLayout(new BoxLayout(botonesPanel, BoxLayout.X_AXIS));
-        botonesPanel.setOpaque(false);
-        botonesPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        botonesPanel.add(Box.createHorizontalGlue());
-        botonesPanel.add(siBtn);
-        botonesPanel.add(Box.createHorizontalStrut(20));
-        botonesPanel.add(noBtn);
-        botonesPanel.add(Box.createHorizontalGlue());
+    // Solo pedir respuesta si NO es el primer turno
+    if (!esMiTurno || (!esPrimerTurno && !deboResponder)){
+        JOptionPane.showMessageDialog(this, "Primero debes responder la pregunta del oponente.");
+        return;
+    }
 
+    String texto = preguntaInput.getText().trim();
+if (!texto.isEmpty()) {
+    cliente.enviarMensaje("mensaje:" + texto);
+    areaPreguntas.append("Tú (pregunta): " + texto + "\n\n"); // ← cambio aquí
+    areaPreguntas.setCaretPosition(areaPreguntas.getDocument().getLength());
+    preguntaInput.setText("");
+
+    // Fin del turno
+    cliente.enviarMensaje("turnoFinalizado");
+    esPrimerTurno = false;
+    deboResponder = false;
+    habilitarPregunta(false);
+}
+});
+        
+   cliente.setOnMensaje(texto -> SwingUtilities.invokeLater(() -> {
+   areaPreguntas.append("Tu oponente es: " + oponente + "\n");
+    if (texto.startsWith("adivinar:")) {
+        String nombre = texto.substring(9);
+        areaPreguntas.append("Oponente (adivinó): ¿Es " + nombre + "?\n");
+        
+        if (miPersonajeSecreto.getNombre() != null && miPersonajeSecreto.getNombre().equalsIgnoreCase(nombre)) {
+            // Adivinó correctamente
+            System.out.println(miPersonajeSecreto);
+            gano = true;
+            areaPreguntas.append("Oponente (adivinó): Acertó \n\n");
+            cliente.enviarMensaje("¡Ganaste!");
+            
+            mostrarPantallaAnimo();
+            registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
+            actualizarDatosJugador(jugador, gano, intentosRestantes, miPersonajeSecreto.getNombre());
+        } else {
+            cliente.enviarMensaje("mensaje:No");
+            areaPreguntas.append("Oponente (adivinó): No acertó \n\n");
+            System.out.println(miPersonajeSecreto);
+            habilitarPregunta(true);
+            deboResponder = true;
+        }
+        return;
+    }
+
+    if (texto.equalsIgnoreCase("¡Ganaste!")) {
+        areaPreguntas.append("Oponente: Gasto sus 3 oportunidades\n");
+        mostrarPantallaFelicidades();
+        gano = true;
+        return;
+    }
+
+
+    if (!texto.equalsIgnoreCase("Sí") && 
+    !texto.equalsIgnoreCase("No") && 
+    !texto.equalsIgnoreCase("turnoFinalizado")) {
+    
+    areaPreguntas.append("Oponente (pregunta): " + texto + "\n");
+    mostrarDialogoRespuesta(texto);
+
+} else if (texto.equalsIgnoreCase("Sí") || texto.equalsIgnoreCase("No")) {
+    
+    areaPreguntas.append("Oponente (respuesta): " + texto + "\n\n");
+}
+}));
         contenidoDerecho.add(nicknameLabel);
         contenidoDerecho.add(Box.createVerticalStrut(8));
         contenidoDerecho.add(turnoLabel);
@@ -647,12 +814,10 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         contenidoDerecho.add(Box.createVerticalStrut(20));
         contenidoDerecho.add(preguntasCombo);
         contenidoDerecho.add(Box.createVerticalStrut(10));
-        contenidoDerecho.add(areaPreguntas);
+        contenidoDerecho.add(scrollPreguntas);
         contenidoDerecho.add(Box.createVerticalStrut(10));
         contenidoDerecho.add(enviarPanel);
         contenidoDerecho.add(Box.createVerticalStrut(10));
-        contenidoDerecho.add(botonesPanel);
-
         mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(centroPanel, BorderLayout.CENTER);
         mainPanel.add(rightPanel, BorderLayout.EAST);
@@ -673,6 +838,120 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         String tiempo = String.format("Tiempo: %02d:%02d", minutos, segundos);
         cronometroLabel.setText(tiempo);
     }
+    
+private void mostrarDialogoRespuesta(String pregunta) {
+    JDialog dialogo = new JDialog(this, "Responder pregunta", true);
+    dialogo.setSize(350, 180);
+    dialogo.setLayout(new BorderLayout());
+    dialogo.setLocationRelativeTo(this);
+    dialogo.getContentPane().setBackground(Color.WHITE);
+    dialogo.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE); // impide cerrar con 'X'
+
+    // Pregunta centrada
+    JLabel preguntaLabel = new JLabel("<html><center>" + pregunta + "</center></html>", SwingConstants.CENTER);
+    preguntaLabel.setFont(new Font("Arial", Font.BOLD, 16));
+    preguntaLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
+
+    // Panel de botones
+    JPanel botonesPanel = new JPanel(new FlowLayout());
+    botonesPanel.setBackground(Color.WHITE);
+
+    JButton btnSi = new JButton("Sí");
+    JButton btnNo = new JButton("No");
+
+    btnSi.setPreferredSize(new Dimension(100, 35));
+    btnNo.setPreferredSize(new Dimension(100, 35));
+    btnSi.setBackground(new Color(0x74, 0xE6, 0x86));
+    btnNo.setBackground(new Color(0xFF, 0x70, 0x70));
+    btnSi.setFont(new Font("Arial", Font.BOLD, 14));
+    btnNo.setFont(new Font("Arial", Font.BOLD, 14));
+
+    // Acciones
+    btnSi.addActionListener(e -> {
+    cliente.enviarMensaje("mensaje:Sí");
+    areaPreguntas.append("Tú (respuesta): Sí\n\n");  // ← cambio aquí
+    areaPreguntas.setCaretPosition(areaPreguntas.getDocument().getLength());
+    dialogo.dispose();
+    deboResponder = true;
+    habilitarPregunta(true);
+    });
+
+    btnNo.addActionListener(e -> {
+        cliente.enviarMensaje("mensaje:No");
+        areaPreguntas.append("Tú (respuesta): No\n\n");  // ← cambio aquí
+        areaPreguntas.setCaretPosition(areaPreguntas.getDocument().getLength());
+        dialogo.dispose();
+        deboResponder = true;
+        habilitarPregunta(true);
+    });
+        // Agrega botones al panel
+        botonesPanel.add(btnSi);
+        botonesPanel.add(btnNo);
+
+    // Agrega componentes al diálogo
+    dialogo.add(preguntaLabel, BorderLayout.CENTER);
+    dialogo.add(botonesPanel, BorderLayout.SOUTH);
+
+    dialogo.setVisible(true); // << IMPORTANTE
+}
+
+
+private void habilitarPregunta(boolean habilitar) {
+    preguntaInput.setEnabled(habilitar);
+    enviarBtn.setEnabled(habilitar);
+    preguntasCombo.setEnabled(habilitar);
+}
+
+private void mostrarPantallaFelicidades() {
+    JOptionPane.showMessageDialog(this, "¡Felicidades, Ganaste!", "Ganaste", JOptionPane.INFORMATION_MESSAGE);
+    // Aquí puedes abrir una pantalla propia si tienes JFrameFelicidades
+}
+
+private void mostrarPantallaAnimo() {
+    JOptionPane.showMessageDialog(this, "¡Ánimo! Lo Hiciste bien.", "Fin del juego", JOptionPane.INFORMATION_MESSAGE);
+    // Aquí también puedes redirigir o cerrar el juego si deseas
+}
+
+private void registrarPartida(String ganador, String personajeGanador) {
+    Partida partida = new Partida();
+    partida.setJugador1(jugador.getNickname());
+    partida.setJugador2(cliente.getNombreOponente()); // <- lo tienes que tener como variable
+    partida.setGanador(ganador);
+    partida.setPersonajeGanador(personajeGanador);
+
+    // Usa lo que ya tienes
+    partida.setFecha(new java.sql.Date(System.currentTimeMillis())); // <-- java.sql.Date
+
+    int minutos = crono / 60;
+    int segundos = crono % 60;
+    Time duracion = Time.valueOf(String.format("00:%02d:%02d", minutos, segundos));
+    partida.setDuracion(duracion);
+
+    ConexionBD.insertarPartida(partida);
+}
+
+    private void actualizarDatosJugador(Jugador jugador, boolean gano, int intentos, String personajeGanador) {
+        jugador.setJugadorVS(cliente.getNombreOponente());
+jugador.setFechaPartida(new java.sql.Date(System.currentTimeMillis()));
+jugador.setTiempo(Time.valueOf(String.format("00:%02d:%02d", crono / 60, crono % 60)));
+jugador.setIntentos((intentos - 4) * -1);
+
+if (gano) {
+    jugador.setVictorias(jugador.getVictorias() + 1);
+    jugador.setRanking(jugador.getRanking() + 50);
+} else {
+    jugador.setDerrotas(jugador.getDerrotas() + 1);
+    jugador.setRanking(jugador.getRanking() - 50);
+}
+
+        boolean actualizado = ConexionBD.actualizarJugador(jugador, jugador.getId());
+        if (!actualizado) {
+            System.out.println("No se pudo actualizar el jugador.");
+        } else {
+            System.out.println("Jugador actualizado correctamente.");
+        }
+    }
+
 
     // Métodos de utilería para fecha/hora y cronómetro
    

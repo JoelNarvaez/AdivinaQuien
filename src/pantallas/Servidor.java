@@ -1,32 +1,24 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package pantallas;
 
-/**
- *
- * @author loren
- */
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
+import java.util.*;
+import java.util.concurrent.*;
 import static pantallas.PersonajeDisney.elegirPersonajesAleatorios;
 
 public class Servidor {
     private ServerSocket serverSocket;
     private ExecutorService pool;
-    private List<ObjectOutputStream> clientesConectados = new ArrayList<>();
+
+    // Listas de espera para emparejar jugadores
+    private List<Jugador> jugadoresEnEspera = new ArrayList<>();
+    private List<ObjectOutputStream> salidasEnEspera = new ArrayList<>();
+    private List<ObjectInputStream> entradasEnEspera = new ArrayList<>();
 
     public void iniciarServidor(int puerto) {
         try {
             serverSocket = new ServerSocket(puerto);
-            pool = Executors.newFixedThreadPool(2); // solo 2 jugadores
-
+            pool = Executors.newCachedThreadPool();  // permite múltiples partidas
             System.out.println("Servidor iniciado en puerto " + puerto);
 
             while (true) {
@@ -46,48 +38,55 @@ public class Servidor {
         }
 
         public void run() {
-            try (
-                Socket clienteSocket = socket;
-                ObjectOutputStream out = new ObjectOutputStream(clienteSocket.getOutputStream());
-                ObjectInputStream in = new ObjectInputStream(clienteSocket.getInputStream());
-            ) {
-                Jugador jugador = (Jugador) in.readObject();
+            ObjectOutputStream out = null;
+            ObjectInputStream in = null;
+
+            try {
+                out = new ObjectOutputStream(socket.getOutputStream());
+                in = new ObjectInputStream(socket.getInputStream());
+
+                Object recibido = in.readObject();
+                if (!(recibido instanceof Jugador jugador)) {
+                    System.out.println("Error: objeto recibido no es un Jugador.");
+                    socket.close();
+                    return;
+                }
+
                 System.out.println("Jugador conectado: " + jugador.getNickname());
 
-                synchronized (clientesConectados) {
-                    clientesConectados.add(out);
+                synchronized (Servidor.this) {
+                    jugadoresEnEspera.add(jugador);
+                    salidasEnEspera.add(out);
+                    entradasEnEspera.add(in);
 
-                    if (clientesConectados.size() == 2) {
-                        // 1. Generar personajes aleatorios solo una vez
+                    if (jugadoresEnEspera.size() >= 2) {
                         PersonajeDisney[] seleccionados = elegirPersonajesAleatorios(24);
 
-                        // 2. Enviar "start" y luego el vector a ambos jugadores
-                        for (ObjectOutputStream clienteOut : clientesConectados) {
-                            clienteOut.writeObject("start");
-                            clienteOut.writeObject(seleccionados);
-                            clienteOut.flush();
-                        }
+                        List<Jugador> jugadoresPartida = new ArrayList<>();
+                        List<ObjectOutputStream> salidasPartida = new ArrayList<>();
+                        List<ObjectInputStream> entradasPartida = new ArrayList<>();
 
-                        // 3. Limpiar para permitir otro par
-                        clientesConectados.clear();
+                        jugadoresPartida.add(jugadoresEnEspera.remove(0));
+                        jugadoresPartida.add(jugadoresEnEspera.remove(0));
+                        salidasPartida.add(salidasEnEspera.remove(0));
+                        salidasPartida.add(salidasEnEspera.remove(0));
+                        entradasPartida.add(entradasEnEspera.remove(0));
+                        entradasPartida.add(entradasEnEspera.remove(0));
+
+                        // Aquí NO cerramos sockets. La clase PartidaConexion manejará todo.
+                        PartidaConexion nuevaPartida = new PartidaConexion(jugadoresPartida, salidasPartida, entradasPartida);
+                        new Thread(nuevaPartida).start();
                     }
                 }
 
-                // Escuchar mensajes del cliente conectado
-                while (true) {
-                    Object entrada = in.readObject(); // se bloquea esperando
-                    if (entrada instanceof String mensaje) {
-                        System.out.println("Mensaje recibido de " + jugador.getNickname() + ": " + mensaje);
-                    }
-                }
-
-            } catch (EOFException eof) {
-                System.out.println("Jugador desconectado (fin de flujo)");
-            } catch (SocketException se) {
-                System.out.println("Jugador desconectado (socket cerrado)");
+            } catch (EOFException | SocketException eof) {
+                System.out.println("Jugador desconectado prematuramente.");
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            // ⚠️ Ya NO se cierra el socket aquí si el jugador está en espera o fue emparejado.
+            // El cierre debe ser responsabilidad de la clase PartidaConexion
         }
     }
 }

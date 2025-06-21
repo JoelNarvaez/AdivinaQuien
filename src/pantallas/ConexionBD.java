@@ -161,32 +161,33 @@ public class ConexionBD {
     }
 
     // Actualizar jugador
-    public static boolean actualizarJugador(Jugador j, int id) {
-        String sql = "UPDATE jugadores SET nombre_jugador = ?, profile = ?, victorias = ?, derrotas = ?, edad = ?, personaje_adivinado = ?, tiempo_juego = ?, intentos = ?, fecha_partida = ?, jugador_vs = ?, ranking = ? WHERE id = ?";
+   public static boolean actualizarJugador(Jugador j, int id) {
+    String sql = "UPDATE jugadores SET nombre_jugador = ?, profile = ?, victorias = ?, derrotas = ?, edad = ?, personaje_adivinado = ?, tiempo_juego = ?, intentos = ?, fecha_partida = ?, jugador_vs = ?, ranking = ? WHERE id = ?";
 
-        try (Connection conn = conectar();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    try (Connection conn = conectar();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, j.getNickname());
-            stmt.setString(2, j.getProfileIcon());
-            stmt.setInt(3, j.getVictorias());
-            stmt.setInt(4, j.getDerrotas());
-            stmt.setInt(5, j.getEdad());
-            stmt.setString(6, j.getPersonajeAdivinado());
-            stmt.setTime(7, j.getTiempo());
-            stmt.setInt(8, j.getIntentos());
-            stmt.setDate(9, new java.sql.Date(j.getFechaPartida().getTime()));
-            stmt.setString(10, j.getJugadorVS());
-            stmt.setInt(11, j.getRanking());
-            stmt.setInt(12, id);
+        stmt.setString(1, j.getNickname());
+        stmt.setString(2, j.getProfileIcon());
+        stmt.setInt(3, j.getVictorias());
+        stmt.setInt(4, j.getDerrotas());
+        stmt.setInt(5, j.getEdad()); // 👈 NUEVA LÍNEA para la edad
+        stmt.setString(6, j.getPersonajeAdivinado());
+        stmt.setTime(7, j.getTiempo());
+        stmt.setInt(8, j.getIntentos());
+        stmt.setDate(9, new java.sql.Date(j.getFechaPartida().getTime()));
+        stmt.setString(10, j.getJugadorVS());
+        stmt.setInt(11, j.getRanking());
+        stmt.setInt(12, id);
 
-            return stmt.executeUpdate() > 0;
+        return stmt.executeUpdate() > 0;
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
     }
+}
+
 
     
     public static List<String> obtenerPreguntasActivas() {
