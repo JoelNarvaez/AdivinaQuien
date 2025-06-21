@@ -788,6 +788,8 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 areaPreguntas.append("Oponente: Gasto sus 3 oportunidades\n");
                 mostrarPantallaFelicidades();
                 gano = true;
+                registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
+                actualizarDatosJugador(jugador, gano, intentosRestantes, miPersonajeSecreto.getNombre());
                 return;
             }
 
