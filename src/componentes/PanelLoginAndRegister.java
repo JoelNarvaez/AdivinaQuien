@@ -254,7 +254,7 @@ private PanelCover panelCover; // Agrega esta variable
         }
         // Conexión al servidor
     Cliente cliente = new Cliente();
-    String host = "192.168.56.1"; // cambia si es necesario
+    String host = "192.168.100.218"; // cambia si es necesario
     int puerto = 12345;
 
     boolean conectado = cliente.conectar(host, puerto, jugador);
@@ -407,7 +407,7 @@ private void initLogin() {
 
         // Conexión al servidor
         Cliente cliente = new Cliente();
-        String host = "192.168.56.1"; // Cambia si necesario
+        String host = "192.168.100.218"; // Cambia si necesario
         int puerto = 12345;
 
         boolean conectado = cliente.conectar(host, puerto, jugador);
