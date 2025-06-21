@@ -55,7 +55,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     private JLabel intentos;
     private String oponente;
     boolean gano = false;
-
+    int cont = 0 ;// AAAA
        
     public JFrameGameScreen(){
         
@@ -192,29 +192,28 @@ public class JFrameGameScreen extends javax.swing.JFrame {
 
     rbAleatorio.addActionListener(e -> {
         Random rand = new Random();
-    int idxAleatorio = rand.nextInt(seleccionados.length);
-    PersonajeDisney personajeAleatorio = seleccionados[idxAleatorio];
-    mostrarImagenSeleccionada(personajeAleatorio, lblImagen, 250, 250);
-    mostrarImagenSeleccionada(personajeAleatorio, personajeImagen, 200, 200);
-    personajeLabel.setText("Eres: " + personajeAleatorio.getNombre());
-    miPersonajeSecreto = personajeAleatorio;
-    personajeYaSeleccionadoEnBienvenida = true; // <--- NUEVO
+        int idxAleatorio = rand.nextInt(seleccionados.length);
+        PersonajeDisney personajeAleatorio = seleccionados[idxAleatorio];
+        mostrarImagenSeleccionada(personajeAleatorio, lblImagen, 250, 250);
+        mostrarImagenSeleccionada(personajeAleatorio, personajeImagen, 200, 200);
+        personajeLabel.setText("Eres: " + personajeAleatorio.getNombre());
+        miPersonajeSecreto = personajeAleatorio;
+        personajeYaSeleccionadoEnBienvenida = true; // <--- NUEVO
 
-    lblEscogiendo.setVisible(true);
-    cl.show(panelContenedor, "IMAGEN");
-    lblImagen.setVisible(true);
-    comboPersonajes.setVisible(false);
-    lblImagenCombo.setVisible(false);
-    });
+        lblEscogiendo.setVisible(true);
+        cl.show(panelContenedor, "IMAGEN");
+        lblImagen.setVisible(true);
+        comboPersonajes.setVisible(false);
+        lblImagenCombo.setVisible(false);
+        });
 
-    rbNombre.addActionListener(e -> {
-    lblEscoge.setVisible(true);
-    lblEscogiendo.setVisible(false);
-    cl.show(panelContenedor, "COMBO");
-    comboPersonajes.setVisible(true);
-    lblImagen.setVisible(false);
-    lblImagenCombo.setVisible(true);
-
+        rbNombre.addActionListener(e -> {
+        lblEscoge.setVisible(true);
+        lblEscogiendo.setVisible(false);
+        cl.show(panelContenedor, "COMBO");
+        comboPersonajes.setVisible(true);
+        lblImagen.setVisible(false);
+        lblImagenCombo.setVisible(true);
     });
 
 
@@ -283,18 +282,18 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     }
    
    public void marcarMiTurno() {
-   esMiTurno = true;
-    SwingUtilities.invokeLater(() -> {
-        turnoLabel.setText("¡Es tu turno!");
-        // Sonido o animación opcional
-        Toolkit.getDefaultToolkit().beep();
-    });
+    esMiTurno = true;
+     SwingUtilities.invokeLater(() -> {
+         turnoLabel.setText("¡Es tu turno!");
+         // Sonido o animación opcional
+         Toolkit.getDefaultToolkit().beep();
+     });
    }
 
-   public void marcarEspera() {
+    public void marcarEspera() {
        esMiTurno = false;
        SwingUtilities.invokeLater(() -> turnoLabel.setText("Esperando turno..."));
-   }
+    }
 
     private JPanel crearPanelJuego() {
         JPanel mainPanel = new JPanel(new BorderLayout());
@@ -690,7 +689,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         preguntasCombo.setAlignmentX(Component.CENTER_ALIGNMENT);
         
 
-                // Crear el área de texto
+        // Crear el área de texto
         areaPreguntas = new JTextArea(10, 40);
         areaPreguntas.setText("Tu oponente es: " + oponente + "\n\n");
         areaPreguntas.setFont(new Font("Century Gothic", Font.PLAIN, 14));
@@ -746,66 +745,61 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     }
 
     String texto = preguntaInput.getText().trim();
-if (!texto.isEmpty()) {
-    cliente.enviarMensaje("mensaje:" + texto);
-    areaPreguntas.append("Tú (pregunta): " + texto + "\n\n"); // ← cambio aquí
-    areaPreguntas.setCaretPosition(areaPreguntas.getDocument().getLength());
-    preguntaInput.setText("");
+    if (!texto.isEmpty()) {
+        cliente.enviarMensaje("mensaje:" + texto);
+        areaPreguntas.append("Tú (pregunta): " + texto + "\n\n"); // ← cambio aquí
+        areaPreguntas.setCaretPosition(areaPreguntas.getDocument().getLength());
+        preguntaInput.setText("");
 
-    // Fin del turno
-    cliente.enviarMensaje("turnoFinalizado");
-    esPrimerTurno = false;
-    deboResponder = false;
-    habilitarPregunta(false);
-}
-});
-        
-   cliente.setOnMensaje(texto -> SwingUtilities.invokeLater(() -> {
-   areaPreguntas.append("Tu oponente es: " + oponente + "\n");
-    if (texto.startsWith("adivinar:")) {
-        String nombre = texto.substring(9);
-        areaPreguntas.append("Oponente (adivinó): ¿Es " + nombre + "?\n");
-        
-        if (miPersonajeSecreto.getNombre() != null && miPersonajeSecreto.getNombre().equalsIgnoreCase(nombre)) {
-            // Adivinó correctamente
-            System.out.println(miPersonajeSecreto);
-            gano = true;
-            areaPreguntas.append("Oponente (adivinó): Acertó \n\n");
-            cliente.enviarMensaje("¡Ganaste!");
-            
-            mostrarPantallaAnimo();
-            registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
-            actualizarDatosJugador(jugador, gano, intentosRestantes, miPersonajeSecreto.getNombre());
-        } else {
-            cliente.enviarMensaje("mensaje:No");
-            areaPreguntas.append("Oponente (adivinó): No acertó \n\n");
-            System.out.println(miPersonajeSecreto);
-            habilitarPregunta(true);
-            deboResponder = true;
-        }
-        return;
+        // Fin del turno
+        cliente.enviarMensaje("turnoFinalizado");
+        esPrimerTurno = false;
+        deboResponder = false;
+        habilitarPregunta(false);
     }
+    });
+        
+        cliente.setOnMensaje(texto -> SwingUtilities.invokeLater(() -> {
+            if (texto.startsWith("adivinar:")) {
+                String nombre = texto.substring(9);
+                areaPreguntas.append("Oponente (adivinó): ¿Es " + nombre + "?\n");
 
-    if (texto.equalsIgnoreCase("¡Ganaste!")) {
-        areaPreguntas.append("Oponente: Gasto sus 3 oportunidades\n");
-        mostrarPantallaFelicidades();
-        gano = true;
-        return;
-    }
+                if (miPersonajeSecreto.getNombre() != null && miPersonajeSecreto.getNombre().equalsIgnoreCase(nombre)) {
+                    // Adivinó correctamente
+                    System.out.println(miPersonajeSecreto);
+                    gano = true;
+                    areaPreguntas.append("Oponente (adivinó): Acertó \n\n");
+                    cliente.enviarMensaje("¡Ganaste!");
 
+                    mostrarPantallaAnimo();
+                    registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
+                    actualizarDatosJugador(jugador, gano, intentosRestantes, miPersonajeSecreto.getNombre());
+                } else {
+                    cliente.enviarMensaje("mensaje:No");
+                    areaPreguntas.append("Oponente (adivinó): No acertó \n\n");
+                    System.out.println(miPersonajeSecreto);
+                    habilitarPregunta(true);
+                    deboResponder = true;
+                }
+                return;
+            }
 
-    if (!texto.equalsIgnoreCase("Sí") && 
-    !texto.equalsIgnoreCase("No") && 
-    !texto.equalsIgnoreCase("turnoFinalizado")) {
-    
-    areaPreguntas.append("Oponente (pregunta): " + texto + "\n");
-    mostrarDialogoRespuesta(texto);
+            if (texto.equalsIgnoreCase("¡Ganaste!")) {
+                areaPreguntas.append("Oponente: Gasto sus 3 oportunidades\n");
+                mostrarPantallaFelicidades();
+                gano = true;
+                return;
+            }
 
-} else if (texto.equalsIgnoreCase("Sí") || texto.equalsIgnoreCase("No")) {
-    
-    areaPreguntas.append("Oponente (respuesta): " + texto + "\n\n");
-}
-}));
+            if (!texto.equalsIgnoreCase("Sí") && !texto.equalsIgnoreCase("No") && !texto.equalsIgnoreCase("turnoFinalizado")) {
+                areaPreguntas.append("Oponente (pregunta): " + texto + "\n");
+                mostrarDialogoRespuesta(texto);
+                
+            } else if (texto.equalsIgnoreCase("Sí") || texto.equalsIgnoreCase("No")) {
+                areaPreguntas.append("Oponente (respuesta): " + texto + "\n\n");
+            }
+        }));
+        
         contenidoDerecho.add(nicknameLabel);
         contenidoDerecho.add(Box.createVerticalStrut(8));
         contenidoDerecho.add(turnoLabel);
@@ -839,110 +833,111 @@ if (!texto.isEmpty()) {
         cronometroLabel.setText(tiempo);
     }
     
-private void mostrarDialogoRespuesta(String pregunta) {
-    JDialog dialogo = new JDialog(this, "Responder pregunta", true);
-    dialogo.setSize(350, 180);
-    dialogo.setLayout(new BorderLayout());
-    dialogo.setLocationRelativeTo(this);
-    dialogo.getContentPane().setBackground(Color.WHITE);
-    dialogo.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE); // impide cerrar con 'X'
+    private void mostrarDialogoRespuesta(String pregunta) {
+        JDialog dialogo = new JDialog(this, "Responder pregunta", true);
+        dialogo.setSize(350, 180);
+        dialogo.setLayout(new BorderLayout());
+        dialogo.setLocationRelativeTo(this);
+        dialogo.getContentPane().setBackground(Color.WHITE);
+        dialogo.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE); // impide cerrar con 'X'
 
-    // Pregunta centrada
-    JLabel preguntaLabel = new JLabel("<html><center>" + pregunta + "</center></html>", SwingConstants.CENTER);
-    preguntaLabel.setFont(new Font("Arial", Font.BOLD, 16));
-    preguntaLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
+        // Pregunta centrada
+        JLabel preguntaLabel = new JLabel("<html><center>" + pregunta + "</center></html>", SwingConstants.CENTER);
+        preguntaLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        preguntaLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
 
-    // Panel de botones
-    JPanel botonesPanel = new JPanel(new FlowLayout());
-    botonesPanel.setBackground(Color.WHITE);
+        // Panel de botones
+        JPanel botonesPanel = new JPanel(new FlowLayout());
+        botonesPanel.setBackground(Color.WHITE);
 
-    JButton btnSi = new JButton("Sí");
-    JButton btnNo = new JButton("No");
+        JButton btnSi = new JButton("Sí");
+        JButton btnNo = new JButton("No");
 
-    btnSi.setPreferredSize(new Dimension(100, 35));
-    btnNo.setPreferredSize(new Dimension(100, 35));
-    btnSi.setBackground(new Color(0x74, 0xE6, 0x86));
-    btnNo.setBackground(new Color(0xFF, 0x70, 0x70));
-    btnSi.setFont(new Font("Arial", Font.BOLD, 14));
-    btnNo.setFont(new Font("Arial", Font.BOLD, 14));
+        btnSi.setPreferredSize(new Dimension(100, 35));
+        btnNo.setPreferredSize(new Dimension(100, 35));
+        btnSi.setBackground(new Color(0x74, 0xE6, 0x86));
+        btnNo.setBackground(new Color(0xFF, 0x70, 0x70));
+        btnSi.setFont(new Font("Arial", Font.BOLD, 14));
+        btnNo.setFont(new Font("Arial", Font.BOLD, 14));
 
-    // Acciones
-    btnSi.addActionListener(e -> {
-    cliente.enviarMensaje("mensaje:Sí");
-    areaPreguntas.append("Tú (respuesta): Sí\n\n");  // ← cambio aquí
-    areaPreguntas.setCaretPosition(areaPreguntas.getDocument().getLength());
-    dialogo.dispose();
-    deboResponder = true;
-    habilitarPregunta(true);
-    });
+        // Acciones
+        btnSi.addActionListener(e -> {
+            cliente.enviarMensaje("mensaje:Sí");
+            areaPreguntas.append("Tú (respuesta): Sí\n\n");  // ← cambio aquí
+            areaPreguntas.setCaretPosition(areaPreguntas.getDocument().getLength());
+            dialogo.dispose();
+            deboResponder = true;
+            habilitarPregunta(true);
+        });
 
-    btnNo.addActionListener(e -> {
-        cliente.enviarMensaje("mensaje:No");
-        areaPreguntas.append("Tú (respuesta): No\n\n");  // ← cambio aquí
-        areaPreguntas.setCaretPosition(areaPreguntas.getDocument().getLength());
-        dialogo.dispose();
-        deboResponder = true;
-        habilitarPregunta(true);
-    });
+        btnNo.addActionListener(e -> {
+            cliente.enviarMensaje("mensaje:No");
+            areaPreguntas.append("Tú (respuesta): No\n\n");  // ← cambio aquí
+            areaPreguntas.setCaretPosition(areaPreguntas.getDocument().getLength());
+            dialogo.dispose();
+            deboResponder = true;
+            habilitarPregunta(true);
+        });
+        
         // Agrega botones al panel
         botonesPanel.add(btnSi);
         botonesPanel.add(btnNo);
 
-    // Agrega componentes al diálogo
-    dialogo.add(preguntaLabel, BorderLayout.CENTER);
-    dialogo.add(botonesPanel, BorderLayout.SOUTH);
+        // Agrega componentes al diálogo
+        dialogo.add(preguntaLabel, BorderLayout.CENTER);
+        dialogo.add(botonesPanel, BorderLayout.SOUTH);
 
-    dialogo.setVisible(true); // << IMPORTANTE
-}
+        dialogo.setVisible(true); // << IMPORTANTE
+    }
 
 
-private void habilitarPregunta(boolean habilitar) {
-    preguntaInput.setEnabled(habilitar);
-    enviarBtn.setEnabled(habilitar);
-    preguntasCombo.setEnabled(habilitar);
-}
+    private void habilitarPregunta(boolean habilitar) {
+        preguntaInput.setEnabled(habilitar);
+        enviarBtn.setEnabled(habilitar);
+        preguntasCombo.setEnabled(habilitar);
+    }
 
-private void mostrarPantallaFelicidades() {
-    JOptionPane.showMessageDialog(this, "¡Felicidades, Ganaste!", "Ganaste", JOptionPane.INFORMATION_MESSAGE);
-    // Aquí puedes abrir una pantalla propia si tienes JFrameFelicidades
-}
+    private void mostrarPantallaFelicidades() {
+        JOptionPane.showMessageDialog(this, "¡Felicidades, Ganaste!", "Ganaste", JOptionPane.INFORMATION_MESSAGE);
+        // Aquí puedes abrir una pantalla propia si tienes JFrameFelicidades
+    }
 
-private void mostrarPantallaAnimo() {
-    JOptionPane.showMessageDialog(this, "¡Ánimo! Lo Hiciste bien.", "Fin del juego", JOptionPane.INFORMATION_MESSAGE);
-    // Aquí también puedes redirigir o cerrar el juego si deseas
-}
+    private void mostrarPantallaAnimo() {
+        JOptionPane.showMessageDialog(this, "¡Ánimo! Lo Hiciste bien.", "Fin del juego", JOptionPane.INFORMATION_MESSAGE);
+        // Aquí también puedes redirigir o cerrar el juego si deseas
+    }
 
-private void registrarPartida(String ganador, String personajeGanador) {
-    Partida partida = new Partida();
-    partida.setJugador1(jugador.getNickname());
-    partida.setJugador2(cliente.getNombreOponente()); // <- lo tienes que tener como variable
-    partida.setGanador(ganador);
-    partida.setPersonajeGanador(personajeGanador);
+    private void registrarPartida(String ganador, String personajeGanador) {
+        Partida partida = new Partida();
+        partida.setJugador1(jugador.getNickname());
+        partida.setJugador2(cliente.getNombreOponente()); // <- lo tienes que tener como variable
+        partida.setGanador(ganador);
+        partida.setPersonajeGanador(personajeGanador);
 
-    // Usa lo que ya tienes
-    partida.setFecha(new java.sql.Date(System.currentTimeMillis())); // <-- java.sql.Date
+        // Usa lo que ya tienes
+        partida.setFecha(new java.sql.Date(System.currentTimeMillis())); // <-- java.sql.Date
 
-    int minutos = crono / 60;
-    int segundos = crono % 60;
-    Time duracion = Time.valueOf(String.format("00:%02d:%02d", minutos, segundos));
-    partida.setDuracion(duracion);
+        int minutos = crono / 60;
+        int segundos = crono % 60;
+        Time duracion = Time.valueOf(String.format("00:%02d:%02d", minutos, segundos));
+        partida.setDuracion(duracion);
 
-    ConexionBD.insertarPartida(partida);
-}
+        ConexionBD.insertarPartida(partida);
+    }
 
     private void actualizarDatosJugador(Jugador jugador, boolean gano, int intentos, String personajeGanador) {
         jugador.setJugadorVS(cliente.getNombreOponente());
-jugador.setFechaPartida(new java.sql.Date(System.currentTimeMillis()));
-jugador.setTiempo(Time.valueOf(String.format("00:%02d:%02d", crono / 60, crono % 60)));
-jugador.setIntentos((intentos - 4) * -1);
+        jugador.setFechaPartida(new java.sql.Date(System.currentTimeMillis()));
+        jugador.setTiempo(Time.valueOf(String.format("00:%02d:%02d", crono / 60, crono % 60)));
+        jugador.setIntentos((intentos - 4) * -1);
 
-if (gano) {
-    jugador.setVictorias(jugador.getVictorias() + 1);
-    jugador.setRanking(jugador.getRanking() + 50);
-} else {
-    jugador.setDerrotas(jugador.getDerrotas() + 1);
-    jugador.setRanking(jugador.getRanking() - 50);
-}
+        if (gano) {
+            jugador.setVictorias(jugador.getVictorias() + 1);
+            jugador.setRanking(jugador.getRanking() + 50);
+        } else {
+            jugador.setDerrotas(jugador.getDerrotas() + 1);
+            jugador.setRanking(jugador.getRanking() - 50);
+        }
 
         boolean actualizado = ConexionBD.actualizarJugador(jugador, jugador.getId());
         if (!actualizado) {
