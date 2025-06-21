@@ -5,6 +5,7 @@ import Estilos.MyTextField;
 import Estilos.RoundedTextField;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
@@ -12,11 +13,13 @@ import java.awt.Window;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
 import pantallas.Cliente; //Lorenzo
@@ -25,6 +28,7 @@ import pantallas.JFrameGameScreen;
 import pantallas.JFrameRegistro;
 import pantallas.Jugador;
 import pantallas.PersonajeDisney;
+import java.awt.Window;
 
 public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     private Jugador jugador;
@@ -32,6 +36,8 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     private MyTextField edadField;
     private JLabel selectedAvatarLabel;
     private String selectedAvatar = null;
+   final JFrameGameScreen[] gameScreenRef = new JFrameGameScreen[1];  // variable contenedora
+   private JFrameGameScreen gameScreen;
 
     private final String[] avatarFiles = {
         "/Imagenes/profileIcons/boss.png",
@@ -246,32 +252,61 @@ private PanelCover panelCover; // Agrega esta variable
             JOptionPane.showMessageDialog(register, "Jugador no encontrado", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        // Conexión al servidor
+    Cliente cliente = new Cliente();
+    String host = "192.168.56.1"; // cambia si es necesario
+    int puerto = 12345;
 
-        Cliente cliente = new Cliente();
-        String host = "192.168.100.218"; // Cambia si necesario
-        int puerto = 12345;
+    boolean conectado = cliente.conectar(host, puerto, jugador);
 
-        boolean conectado = cliente.conectar(host, puerto, jugador);
+    if (!conectado) {
+        JOptionPane.showMessageDialog(register, "No se pudo conectar al servidor", "Error de conexión", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
 
-        if (!conectado) {
-            JOptionPane.showMessageDialog(register, "No se pudo conectar al servidor", "Error de conexión", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+    // Mostrar diálogo de espera
+    Window contenedor = SwingUtilities.getWindowAncestor(this);
+    JDialog dialogoEspera = mostrarDialogoEspera(contenedor);
 
-        // Obtener personajes recibidos desde el servidor
+    // Escuchar antes de mostrar el diálogo
+   cliente.escucharMensajes(
+    () -> { // onStart
+        dialogoEspera.dispose(); // cerrar el diálogo
+
         PersonajeDisney[] personajes = cliente.getPersonajesRecibidos();
         if (personajes == null) {
-            JOptionPane.showMessageDialog(register, "No se recibieron los personajes del servidor", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(login, "No se recibieron los personajes del servidor", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // Mostrar pantalla de juego pasando personajes
-        JFrameGameScreen gameScreen = new JFrameGameScreen(jugador, personajes);
+        // Obtener el nombre del oponente
+        String oponente = cliente.getNombreOponente();
+
+        // Crear y mostrar la pantalla del juego
+        JFrameGameScreen gameScreen = new JFrameGameScreen(jugador, personajes, cliente, oponente);
+        gameScreenRef[0] = gameScreen; // guardar referencia
         gameScreen.setVisible(true);
 
+        // Cerrar pantalla actual
         Window window = SwingUtilities.getWindowAncestor(this);
         if (window != null) window.dispose();
-    });
+    },
+    () -> { // onTuTurno
+        System.out.println("Turno del jugador");
+        if (gameScreenRef[0] != null) {
+            gameScreenRef[0].marcarMiTurno();  // este método lo defines en JFrameGameScreen
+        }
+    },
+    () -> { // onEspera
+        System.out.println("Esperando turno...");
+        if (gameScreenRef[0] != null) {
+            gameScreenRef[0].marcarEspera();  // este método también lo defines
+        }
+    }
+);
+
+dialogoEspera.setVisible(true);
+});
 
 
     leftArrowBtn.addActionListener(e -> {
@@ -313,97 +348,130 @@ private void updateAvatars() {
 
 
 
-    private void initLogin() {
-        //ImageIcon icono = new ImageIcon(getClass().getResource("/Imagenes/registros/disney.png"));
-        //JLabel imagenLabel = new JLabel(icono);
-        //login.add(imagenLabel, "w 100!, h 100!"); // ajusta tamaño a lo que necesites
-        login.setLayout(new MigLayout("wrap", "push[center]push", "push[]25[]10[]10[]25[]push"));
-        JLabel label = new JLabel("Escribe tu Nickname");
-        label.setFont(new Font("Century Gothic", 1, 28));
-        label.setForeground(new Color(25, 118, 210));
-        login.add(label);
-        MyTextField txtEmail = new MyTextField();
-        txtEmail.setPrefixIcon(new ImageIcon(getClass().getResource("/Imagenes/registros/user.png")));
-        txtEmail.setHint("Nickname");
-        login.add(txtEmail, "w 50%, h 5%");
-        Button cmd = new Button();
-        cmd.setFont(new Font("Century Gothic", Font.BOLD, 18));
-        cmd.setBackground(new Color(255, 111, 0));
-        cmd.setForeground(new Color(255, 255, 255));
-        cmd.setText("DESCUBRIR");
-        login.add(cmd, "Gapy 30, w 30%, h 50");
-        cmd.addActionListener(e -> {
-            // cambios de lore
-            String nickname = txtEmail.getText().trim();
+private void initLogin() {
+    login.setLayout(new MigLayout("wrap", "push[center]push", "push[]25[]10[]10[]25[]push"));
 
-            if (nickname.isEmpty()) {
-                JOptionPane.showMessageDialog(
-                    login,
-                    "Por favor, ingresa tu Nickname.",
-                    "Campo vacío",
-                    JOptionPane.WARNING_MESSAGE
-                );
-                return;
-            }
+    JLabel label = new JLabel("Escribe tu Nickname");
+    label.setFont(new Font("Century Gothic", 1, 28));
+    label.setForeground(new Color(25, 118, 210));
+    login.add(label);
 
-            jugador = ConexionBD.buscarPorNombre(nickname);
+    MyTextField txtEmail = new MyTextField();
+    txtEmail.setPrefixIcon(new ImageIcon(getClass().getResource("/Imagenes/registros/user.png")));
+    txtEmail.setHint("Nickname");
+    login.add(txtEmail, "w 50%, h 5%");
 
-            if (jugador == null) {
-                int opcion = JOptionPane.showConfirmDialog(
-                    login,
-                    "No te encuentras registrado.\n¿Quieres registrarte?",
-                    "Registro",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE
-                );
+    Button cmd = new Button();
+    cmd.setFont(new Font("Century Gothic", Font.BOLD, 18));
+    cmd.setBackground(new Color(255, 111, 0));
+    cmd.setForeground(Color.WHITE);
+    cmd.setText("DESCUBRIR");
+    login.add(cmd, "Gapy 30, w 30%, h 50");
 
-                if (opcion == JOptionPane.YES_OPTION && panelCover != null) {
-                    panelCover.getButton().doClick();
-                } else {
-                    JOptionPane.showMessageDialog(
-                        login,
-                        "Este nickname no existe.",
-                        "Intenta de nuevo.",
-                        JOptionPane.INFORMATION_MESSAGE
-                    );
-                }
-                return;
-            }
+    cmd.addActionListener(e -> {
+        String nickname = txtEmail.getText().trim();
 
-            // Conexión al servidor
-            Cliente cliente = new Cliente();
-            String host = "192.168.100.218";  // ← Cambia por la IP real del servidor si es necesario
-            int puerto = 12345;
-
-            boolean conectado = cliente.conectar(host, puerto, jugador);
-
-            if (!conectado) {
-                JOptionPane.showMessageDialog(login, "No se pudo conectar al servidor", "Error de conexión", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // Obtener personajes desde el cliente
-            PersonajeDisney[] personajes = cliente.getPersonajesRecibidos();
-            if (personajes == null) {
-                JOptionPane.showMessageDialog(login, "No se recibieron los personajes del servidor", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
+        if (nickname.isEmpty()) {
             JOptionPane.showMessageDialog(
                 login,
-                "¡Hola, " + jugador.getNickname() + "! \n Disfruta el juego",
-                "Bienvenido",
-                JOptionPane.INFORMATION_MESSAGE
+                "Por favor, ingresa tu Nickname.",
+                "Campo vacío",
+                JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        jugador = ConexionBD.buscarPorNombre(nickname);
+
+        if (jugador == null) {
+            int opcion = JOptionPane.showConfirmDialog(
+                login,
+                "No te encuentras registrado.\n¿Quieres registrarte?",
+                "Registro",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
             );
 
-            // Pasar también los personajes al constructor del juego
-            JFrameGameScreen gameScreen = new JFrameGameScreen(jugador, personajes);
-            gameScreen.setVisible(true);
+            if (opcion == JOptionPane.YES_OPTION && panelCover != null) {
+                panelCover.getButton().doClick();
+            } else {
+                JOptionPane.showMessageDialog(
+                    login,
+                    "Este nickname no existe.",
+                    "Intenta de nuevo.",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+            return;
+        }
 
-            Window window = SwingUtilities.getWindowAncestor(this);
-            if (window != null) window.dispose();
-        });
+        // Conexión al servidor
+        Cliente cliente = new Cliente();
+        String host = "192.168.56.1"; // Cambia si necesario
+        int puerto = 12345;
+
+        boolean conectado = cliente.conectar(host, puerto, jugador);
+
+        if (!conectado) {
+            JOptionPane.showMessageDialog(login, "No se pudo conectar al servidor", "Error de conexión", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        JOptionPane.showMessageDialog(
+            register,
+            "¡Hola, " + jugador.getNickname() + "! \nDisfruta el juego",
+            "Bienvenido",
+            JOptionPane.INFORMATION_MESSAGE
+        );
+        // Diálogo de espera
+        Window contenedor = SwingUtilities.getWindowAncestor(this);
+        JDialog dialogoEspera = mostrarDialogoEspera(contenedor);
+
+        // Inicia escucha ANTES de mostrar el diálogo
+     cliente.escucharMensajes(
+    () -> { // onStart
+        dialogoEspera.dispose(); // cerrar el diálogo
+
+        PersonajeDisney[] personajes = cliente.getPersonajesRecibidos();
+        if (personajes == null) {
+            JOptionPane.showMessageDialog(login, "No se recibieron los personajes del servidor", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Obtener el nombre del oponente
+        String oponente = cliente.getNombreOponente();
+
+        // Crear y mostrar la pantalla del juego
+        JFrameGameScreen gameScreen = new JFrameGameScreen(jugador, personajes, cliente, oponente);
+        gameScreenRef[0] = gameScreen; // guardar referencia
+        gameScreen.setVisible(true);
+
+        // Cerrar pantalla actual
+        Window window = SwingUtilities.getWindowAncestor(this);
+        if (window != null) window.dispose();
+    },
+    () -> { // onTuTurno
+        System.out.println("Turno del jugador");
+        if (gameScreenRef[0] != null) {
+            gameScreenRef[0].marcarMiTurno();  // este método lo defines en JFrameGameScreen
+        }
+    },
+    () -> { // onEspera
+        System.out.println("Esperando turno...");
+        if (gameScreenRef[0] != null) {
+            gameScreenRef[0].marcarEspera();  // este método también lo defines
+        }
     }
+);
+
+dialogoEspera.setVisible(true);
+
+
+        // Mostrar el diálogo (bloqueante hasta que llegue "start")
+        dialogoEspera.setVisible(true);
+    });
+}
+
 
     public void showRegister(boolean show) {
         if (show) {
@@ -414,6 +482,18 @@ private void updateAvatars() {
             login.setVisible(true);
         }
     }
+    
+   public static JDialog mostrarDialogoEspera(Window padre) {
+    JDialog dialogo = new JDialog(padre, "Esperando al segundo jugador", Dialog.ModalityType.APPLICATION_MODAL);
+    JLabel mensaje = new JLabel("Esperando a que se conecte el otro jugador...", SwingConstants.CENTER);
+    mensaje.setFont(new Font("Arial", Font.PLAIN, 16));
+    dialogo.add(mensaje);
+    dialogo.setSize(350, 120);
+    dialogo.setLocationRelativeTo(padre);
+    dialogo.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    return dialogo;
+}
+
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
