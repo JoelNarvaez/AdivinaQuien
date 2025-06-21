@@ -9,11 +9,13 @@ package pantallas;
  * @author Joel
  */
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Time;
 
 
-public class Partida {
+public class Partida implements Serializable {
+    private static final long serialVersionUID = 1L; // Opcional, pero recomendado
     private int id;
     private String jugador1;
     private String jugador2;
