@@ -7,6 +7,7 @@ package pantallas;
 import Estilos.Button;
 import Estilos.MyTextField;
 import Estilos.RoundedTextField;
+import canciones.ReproductorMusica;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -23,6 +24,7 @@ import pantallas.ConexionBD; // o donde esté el método insertarPartida
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import javax.swing.border.EmptyBorder;
 
 
 
@@ -55,7 +57,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     private JLabel intentos;
     private String oponente;
     boolean gano = false;
-    int cont = 0 ;// AAAA
+    ReproductorMusica reproductor = ReproductorMusica.getInstancia();
        
     public JFrameGameScreen(){
         
@@ -298,6 +300,8 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     private JPanel crearPanelJuego() {
         JPanel mainPanel = new JPanel(new BorderLayout());
         
+        configurarTeclaEnterParaPausarReanudarMusica();
+        
         // Inicializar fecha y hora
         setTitle("ADIVINA QUIÉN");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -331,95 +335,145 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         topPanel.setPreferredSize(new Dimension(0, 70));
 
         Button salirBtn = new Button();
-        salirBtn.setText("  ?  ");
-        salirBtn.setFont(new Font("Arial", Font.BOLD, 14));
-        salirBtn.setBackground(Color.RED);
+        salirBtn.setText(" ? ");
+        salirBtn.setFont(new Font("Arial", Font.BOLD, 18));
         salirBtn.setForeground(Color.WHITE);
+        salirBtn.setBackground(Color.RED);
+        salirBtn.setFocusPainted(false);
+        salirBtn.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+        salirBtn.setPreferredSize(new Dimension(45, 45));
+        salirBtn.setContentAreaFilled(true);
+        salirBtn.setOpaque(true);
+        salirBtn.setBorderPainted(false);
+
+        // Redondo
+        salirBtn.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
+            @Override
+            public void paint(Graphics g, JComponent c) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(salirBtn.getBackground());
+                g2.fillOval(0, 0, c.getWidth(), c.getHeight());
+                super.paint(g2, c);
+                g2.dispose();
+            }
+        });
 
         salirBtn.addActionListener(e -> {
             JDialog dialogo = new JDialog((JFrame) SwingUtilities.getWindowAncestor(salirBtn), "Opciones del juego", true);
-            dialogo.setSize(220, 370);
-            dialogo.getContentPane().setBackground(btnColor);
-            dialogo.setLayout(new BorderLayout());
+            dialogo.setSize(350, 490);
+            dialogo.setUndecorated(false);
 
-            JPanel contenedor = new JPanel();
-            contenedor.setBackground(azulMedio); 
-            contenedor.setLayout(new BoxLayout(contenedor, BoxLayout.Y_AXIS));
-            contenedor.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+            // Panel con imagen de fondo
+            JPanel fondoPanel = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    ImageIcon fondo = new ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/fondoMenu.png"));
+                    g.drawImage(fondo.getImage(), 0, 0, getWidth(), getHeight(), this);
+                }
+            };
+            fondoPanel.setLayout(new BoxLayout(fondoPanel, BoxLayout.Y_AXIS));
 
-            String[][] opciones = {
+            fondoPanel.add(Box.createVerticalStrut(90)); 
+
+
+            JPanel botonesPanel = new JPanel();
+            botonesPanel.setOpaque(false);
+            botonesPanel.setLayout(new BoxLayout(botonesPanel, BoxLayout.Y_AXIS));
+            botonesPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            JPanel gridPanel = new JPanel(new GridLayout(2, 2, 20, 20));
+            gridPanel.setOpaque(false);
+            gridPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            panelInferior.setOpaque(false);
+            panelInferior.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            // Botones con sus iconos y etiquetas
+            String[][] botones = {
                 {"musica.png", "Música"},
-                {"menu.png", "Perfil"},
-                {"pelota.png", "Instrucciones"},
+                {"ins.png", "Instrucciones"},
                 {"menu.png", "Menú"},
                 {"cancelar.png", "Cancelar"}
             };
 
-            for (String[] opcion : opciones) {
-                String ruta = "/Imagenes/disenoPantallas/" + opcion[0];
-                String texto = opcion[1];
+            for (int i = 0; i < botones.length; i++) {
+                String ruta = "/Imagenes/disenoPantallas/" + botones[i][0];
+                String texto = botones[i][1];
 
-                JPanel opcionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-                opcionPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-                opcionPanel.setOpaque(false);
-                opcionPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // margen interno
+                JPanel panelBoton = new JPanel();
+                panelBoton.setLayout(new BoxLayout(panelBoton, BoxLayout.Y_AXIS));
+                panelBoton.setOpaque(false);
+                panelBoton.setAlignmentX(Component.CENTER_ALIGNMENT);
+                panelBoton.setAlignmentY(Component.CENTER_ALIGNMENT);
+                panelBoton.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0)); 
 
                 JButton btn = new JButton();
-                btn.setPreferredSize(new Dimension(40, 40));
-                btn.setMaximumSize(new Dimension(40, 40));
-                btn.setMinimumSize(new Dimension(40, 40));
+                btn.setPreferredSize(new Dimension(60, 60));
+                btn.setMaximumSize(new Dimension(60, 60));
+                btn.setMinimumSize(new Dimension(60, 60));
+                btn.setBorder(new EmptyBorder(5, 5, 5, 5));
+                btn.setBorderPainted(false);
                 btn.setContentAreaFilled(false);
                 btn.setFocusPainted(false);
-                btn.setBorderPainted(false);
+                btn.setOpaque(false);
+                btn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
                 java.net.URL url = getClass().getResource(ruta);
                 if (url != null) {
                     ImageIcon icono = new ImageIcon(url);
-                    Image img = icono.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+                    Image img = icono.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
                     btn.setIcon(new ImageIcon(img));
                 }
 
-                JLabel etiqueta = new JLabel(texto);
-                etiqueta.setFont(new Font("Cambria", Font.BOLD, 18));
+                JLabel etiqueta = new JLabel(texto, JLabel.CENTER);
+                etiqueta.setFont(new Font("Comic Sans MS", Font.BOLD, 14));
                 etiqueta.setForeground(Color.BLACK);
+                etiqueta.setAlignmentX(Component.CENTER_ALIGNMENT);
+                etiqueta.setMaximumSize(new Dimension(110, 20));
+                etiqueta.setHorizontalAlignment(SwingConstants.CENTER);
 
-                opcionPanel.add(btn);
-                opcionPanel.add(etiqueta);
-
+                // eventos
                 switch (texto) {
-                    case "Música":
-                        btn.addActionListener(ev -> {
-                            // pausarMusica();
+                    case "Instrucciones" -> btn.addActionListener(ev ->{
                             dialogo.dispose();
-                        });
-                        break;
-                    case "Perfil":
-                        btn.addActionListener(ev -> {
-                            // mostrarPerfil();
-                            dialogo.dispose();
-                        });
-                        break;
-                    case "Instrucciones":
-                        btn.addActionListener(ev -> {
-                            // mostrarInstrucciones();
-                            dialogo.dispose();
-                        });
-                        break;
-                    case "Menú":
-                        btn.addActionListener(ev -> {
-                            // irAlMenuPrincipal();
-                            dialogo.dispose();
-                        });
-                        break;
-                    case "Cancelar":
-                        btn.addActionListener(ev -> dialogo.dispose());
-                        break;
-                }
 
-                contenedor.add(opcionPanel);
+                            JFrameInstrucciones instru = new JFrameInstrucciones();
+
+                            instru.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                            instru.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+                            instru.setAlwaysOnTop(true);
+                            instru.setVisible(true);
+                            instru.toFront();               
+                            instru.requestFocusInWindow(); 
+
+                            instru.setAlwaysOnTop(false);
+                    });
+                    case "Cancelar" -> btn.addActionListener(ev -> dialogo.dispose());
+                }
+                panelBoton.add(btn);
+                panelBoton.add(Box.createVerticalStrut(10));
+                panelBoton.add(etiqueta);
+
+                if (i < 4) {
+                    gridPanel.add(panelBoton);
+                } else {
+                    panelInferior.add(panelBoton);
+                }
             }
 
-            dialogo.add(contenedor, BorderLayout.CENTER);
+            panelInferior.setMaximumSize(gridPanel.getMaximumSize());
+            panelInferior.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            botonesPanel.add(gridPanel);
+            botonesPanel.add(Box.createVerticalStrut(10)); 
+            botonesPanel.add(panelInferior);
+
+            fondoPanel.add(botonesPanel);
+            dialogo.setContentPane(fondoPanel);
             dialogo.setLocationRelativeTo(salirBtn);
             dialogo.setVisible(true);
         });
@@ -584,8 +638,8 @@ public class JFrameGameScreen extends javax.swing.JFrame {
             }
 
             // Restar intento
-            intentosRestantes--;
-            intentos.setText("Intentos restantes: " + intentosRestantes);
+            //intentosRestantes--;
+            //intentos.setText("Intentos restantes: " + intentosRestantes);
             String nombre = seleccionado.getNombre();
             cliente.enviarMensaje("adivinar:" + nombre);
             areaPreguntas.append("Tú (adivinaste): ¿Es " + nombre + "?\n");
@@ -597,13 +651,13 @@ public class JFrameGameScreen extends javax.swing.JFrame {
             esMiTurno = false;
             cliente.enviarMensaje("turnoFinalizado");
             
-            if (intentosRestantes == 0) {
-                areaPreguntas.append("Tú: Te acabste tus 3 intentos");
-                mostrarPantallaAnimo();
-                cliente.enviarMensaje("¡Ganaste!");
-                registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
-                actualizarDatosJugador(jugador, gano, intentosRestantes, miPersonajeSecreto.getNombre());
-            }
+//            if (intentosRestantes == 0) { 
+//                areaPreguntas.append("Tú: Te acabste tus 3 intentos");
+//                mostrarPantallaAnimo();
+//                cliente.enviarMensaje("¡Ganaste!");
+//                registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
+//                actualizarDatosJugador(jugador, gano, intentosRestantes, miPersonajeSecreto.getNombre());
+//            }
         });
         
         JPanel rightTopPanel = new JPanel();
@@ -767,13 +821,13 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 if (miPersonajeSecreto.getNombre() != null && miPersonajeSecreto.getNombre().equalsIgnoreCase(nombre)) {
                     // Adivinó correctamente
                     System.out.println(miPersonajeSecreto);
-                    gano = false;
+                    gano = false; // ← El jugador local perdió (porque el oponente acertó)
                     areaPreguntas.append("Oponente (adivinó): Acertó \n\n");
                     cliente.enviarMensaje("¡Ganaste!");
-
+                    
                     mostrarPantallaAnimo();
                     registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
-                    actualizarDatosJugador(jugador, gano, intentosRestantes, miPersonajeSecreto.getNombre());
+                    actualizarDatosJugador(jugador, gano, 3-intentosRestantes, miPersonajeSecreto.getNombre());
                 } else {
                     cliente.enviarMensaje("mensaje:No");
                     areaPreguntas.append("Oponente (adivinó): No acertó \n\n");
@@ -789,7 +843,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 mostrarPantallaFelicidades();
                 gano = true;
                 registrarPartida(jugador.getNickname(), miPersonajeSecreto.getRutaImagen());
-                actualizarDatosJugador(jugador, gano, intentosRestantes, miPersonajeSecreto.getNombre());
+                actualizarDatosJugador(jugador, gano, 3-intentosRestantes, miPersonajeSecreto.getNombre());
                 return;
             }
 
@@ -797,8 +851,32 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 areaPreguntas.append("Oponente (pregunta): " + texto + "\n");
                 mostrarDialogoRespuesta(texto);
                 
-            } else if (texto.equalsIgnoreCase("Sí") || texto.equalsIgnoreCase("No")) {
-                areaPreguntas.append("Oponente (respuesta): " + texto + "\n\n");
+            } else if (texto.equalsIgnoreCase("Sí")) {
+                areaPreguntas.append("Oponente (respuesta): Sí\n\n");
+
+                // El jugador acertó, ganó
+                mostrarPantallaFelicidades();
+                gano = true;
+                registrarPartida(jugador.getNickname(), miPersonajeSecreto.getRutaImagen());
+                actualizarDatosJugador(jugador, gano, 3 - intentosRestantes, miPersonajeSecreto.getNombre());
+
+            } else if (texto.equalsIgnoreCase("No")) {
+                areaPreguntas.append("Oponente (respuesta): No\n\n");
+
+                intentosRestantes--;
+                intentos.setText("Intentos restantes: " + intentosRestantes);
+
+                if (intentosRestantes == 0) {
+                    areaPreguntas.append("Tú: Te acabaste tus 3 intentos\n");
+                    mostrarPantallaAnimo();
+                    cliente.enviarMensaje("¡Ganaste!"); // ← El oponente gana si tú fallaste el último intento
+                    gano = false;
+                    registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
+                    actualizarDatosJugador(jugador, gano, 3, miPersonajeSecreto.getNombre());
+                } else {
+                    // Todavía hay intentos, sigue el juego
+                    habilitarPregunta(false);
+                }
             }
         }));
         
@@ -900,13 +978,16 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     }
 
     private void mostrarPantallaFelicidades() {
-        JOptionPane.showMessageDialog(this, "¡Felicidades, Ganaste!", "Ganaste", JOptionPane.INFORMATION_MESSAGE);
+        //JOptionPane.showMessageDialog(this, "¡Felicidades, Ganaste!", "Ganaste", JOptionPane.INFORMATION_MESSAGE);
         // Aquí puedes abrir una pantalla propia si tienes JFrameFelicidades
+        new JFrameFelicitacion(jugador.getNickname()).setVisible(true);
+        
     }
 
     private void mostrarPantallaAnimo() {
-        JOptionPane.showMessageDialog(this, "¡Ánimo! Lo Hiciste bien.", "Fin del juego", JOptionPane.INFORMATION_MESSAGE);
+        //JOptionPane.showMessageDialog(this, "¡Ánimo! Lo Hiciste bien.", "Fin del juego", JOptionPane.INFORMATION_MESSAGE);
         // Aquí también puedes redirigir o cerrar el juego si deseas
+         new JFrameAnimo(jugador.getNickname()).setVisible(true);
     }
 
     private void registrarPartida(String ganador, String personajeGanador) {
@@ -949,7 +1030,19 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         }
     }
 
+    private void configurarTeclaEnterParaPausarReanudarMusica() {
+        JRootPane rootPane = this.getRootPane();
 
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("ENTER"), "toggleMusica");
+
+        rootPane.getActionMap().put("toggleMusica", new AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                reproductor.pausarOReanudar(); // método que debes tener en ReproductorMusica
+            }
+        });
+    }
     // Métodos de utilería para fecha/hora y cronómetro
    
     /**

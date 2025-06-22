@@ -14,6 +14,7 @@ import java.sql.Time;
  * @author Joel
  */
 public class Jugador implements Serializable{
+    
     private static final long serialVersionUID = 1L;
     
     //Datos del jugador

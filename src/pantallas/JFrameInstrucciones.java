@@ -4,27 +4,116 @@
  */
 package pantallas;
 
+import Estilos.Button;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.URL;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+
 /**
  *
  * @author marie
  */
 public class JFrameInstrucciones extends javax.swing.JFrame {
     
+    private Image fondoOriginal;
     private JFramePresentacion presentacion;
-
+    
     public void setPresentacion(JFramePresentacion presentacion) {
         this.presentacion = presentacion;
     }
     
-
-    /**
-     * Creates new form JFrameInstrucciones
-     */
     public JFrameInstrucciones() {
-        initComponents();
-        this.setLocationRelativeTo(null);
-    }
+        //setUndecorated(true);
+        setTitle("Instrucciones");
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setExtendedState(MAXIMIZED_BOTH);
+        
+        Color azulMedio = new Color(0x00, 0xC4, 0xCC);
 
+        URL urlImagen = getClass().getResource("/Imagenes/disenoPantallas/FondoInsF.png");
+        if (urlImagen == null) {
+            System.err.println("No se encontró la imagen de fondo");
+            //System.exit(1);
+        }
+        fondoOriginal = new ImageIcon(urlImagen).getImage();
+
+        JPanel panelFondo = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(fondoOriginal, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        panelFondo.setLayout(null);
+        setContentPane(panelFondo);
+
+        Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize();
+        int w = pantalla.width;
+        int h = pantalla.height;
+
+        String instruccionesHtml = "<html>"
+                + "<div style='text-align: left; white-space: pre-wrap;'>"
+                + "1. Elige tu personaje del tablero, con una de las tres opciones disponibles.<br>"
+                + "2. Cuando sea tu turno, haz preguntas para adivinar al oponente.<br>"
+                + "3. Usa los botones para enviar y filtrar preguntas.<br>"
+                + "4. Responde a la pregunta de tu oponente con un SI o un NO y presiona el botón.<br>"
+                + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5. Si deseas hacer una pregunta, escríbela en el cuadro de texto.<br>"
+                + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6. Si intentas adivinar el personaje y fallas, perderás tu turno.<br>"
+                + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7. Recuerda que solo tienes 3 oportunidades para adivinar... ¡Aprovéchalas!<br>"
+                + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8. ¡Intenta adivinar el personaje de tu oponente y diviértete!<br>"
+                + "</div></html>";
+
+        JLabel lblInstrucciones = new JLabel(instruccionesHtml);
+        lblInstrucciones.setFont(new Font("Comic Sans MS", Font.PLAIN, h / 40));
+        lblInstrucciones.setForeground(Color.WHITE);
+        lblInstrucciones.setHorizontalAlignment(SwingConstants.LEFT);
+        lblInstrucciones.setVerticalAlignment(SwingConstants.TOP);
+
+        int labelWidth = (w / 2)+80;
+        int labelX = (w / 4)+60;            
+        int labelY = (h / 4)+100;            
+        int labelHeight = h / 2;       
+        lblInstrucciones.setBounds(labelX, labelY, labelWidth, labelHeight);
+        panelFondo.add(lblInstrucciones);
+
+        Button btnJugar = new Button();
+        btnJugar.setText("REGRESAR");
+
+        int baseX = (w / 2) - 70;   
+        int baseY = (h * 3 / 4);
+        int offsetX = 100;         
+        int offsetY = 30;           
+
+        btnJugar.setBounds(baseX + offsetX, baseY + offsetY, 140, 45);
+        btnJugar.setBackground(azulMedio);
+        btnJugar.setForeground(Color.WHITE);
+        btnJugar.setFont(new Font("Cambria", Font.BOLD, 18));
+        
+        btnJugar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (presentacion != null) {
+                    presentacion.setVisible(true); // volver a la presentación
+                }
+                dispose(); // Cierra solo esta ventana
+            }
+        });
+
+        panelFondo.add(btnJugar);
+
+        //setVisible(true);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -34,90 +123,30 @@ public class JFrameInstrucciones extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabelInstrucciones = new javax.swing.JLabel();
-        jButtonCerrar = new javax.swing.JButton();
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jLabelInstrucciones.setFont(new java.awt.Font("Bahnschrift", 0, 36)); // NOI18N
-        jLabelInstrucciones.setText("Instrucciones");
-
-        jButtonCerrar.setText("Cerrar");
-        jButtonCerrar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonCerrarActionPerformed(evt);
-            }
-        });
+        setPreferredSize(new java.awt.Dimension(1920, 1080));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(263, Short.MAX_VALUE)
-                .addComponent(jLabelInstrucciones, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(257, 257, 257))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(329, 329, 329)
-                .addComponent(jButtonCerrar)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGap(0, 1047, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(64, 64, 64)
-                .addComponent(jLabelInstrucciones)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 192, Short.MAX_VALUE)
-                .addComponent(jButtonCerrar)
-                .addGap(141, 141, 141))
+            .addGap(0, 610, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCerrarActionPerformed
-        // TODO add your handling code here:
-        presentacion.setVisible(true);
-        this.setVisible(false);
-    }//GEN-LAST:event_jButtonCerrarActionPerformed
-
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(JFrameInstrucciones.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(JFrameInstrucciones.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(JFrameInstrucciones.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(JFrameInstrucciones.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                //new JFrameInstrucciones().setVisible(true);
-            }
-        });
+        SwingUtilities.invokeLater(() -> new JFrameInstrucciones());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonCerrar;
-    private javax.swing.JLabel jLabelInstrucciones;
     // End of variables declaration//GEN-END:variables
 }

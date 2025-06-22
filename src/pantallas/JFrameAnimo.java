@@ -4,6 +4,7 @@
  */
 package pantallas;
 
+import canciones.ReproductorMusica;
 import java.awt.*;
 import javax.swing.*;
 
@@ -14,7 +15,7 @@ import javax.swing.*;
 public class JFrameAnimo extends javax.swing.JFrame {
     
     private JFrameGameScreen gamescreen;
-    private final String nombreJugador = "Ana Lorena";
+    ReproductorMusica reproductor = ReproductorMusica.getInstancia();
 
     public void setGamescreen(JFrameGameScreen gamescreen) {
         this.gamescreen = gamescreen;
@@ -26,6 +27,7 @@ public class JFrameAnimo extends javax.swing.JFrame {
      */
     public JFrameAnimo(String nombreJugador) {
         initComponents();
+        configurarTeclaEnterParaPausarReanudarMusica();
         setExtendedState(JFrame.MAXIMIZED_BOTH); // Pantalla completa
         ajustarComponentes(nombreJugador);
         this.setLocationRelativeTo(null);
@@ -68,7 +70,7 @@ public class JFrameAnimo extends javax.swing.JFrame {
     jLabelLluvia2.setBounds((int)(0.0156 * anchoPantalla), (int)(0.3333 * altoPantalla), (int)(0.2448 * anchoPantalla), (int)(0.5185 * altoPantalla));
     jLabelLluvia3.setBounds((int)(0.3281 * anchoPantalla), (int)(0.2685 * altoPantalla), (int)(0.3281 * anchoPantalla), (int)(0.6019 * altoPantalla));
 
-    
+    jLabelMusicaPerdiste.setBounds((int)(0.8802 * anchoPantalla),(int)(0.1296 * altoPantalla),(int)(0.0442 * anchoPantalla),(int)(0.1203 * altoPantalla));
     
     
     ImageIcon imgNubes = new ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nubesAzules.png"));
@@ -86,13 +88,30 @@ public class JFrameAnimo extends javax.swing.JFrame {
     // Cargar directamente los GIFs al tamaño del JLabel
     jLabelTristeza.setIcon(new ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/tristeza.gif")));
     jLabelBarcoSalir.setIcon(new ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/barcoSalir.gif")));
-    /*
+
     jLabelLluvia1.setIcon(new ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/lluviaGif.gif")));
     jLabelLluvia2.setIcon(new ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/lluviaGif.gif")));
     jLabelLluvia3.setIcon(new ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/lluviaGif.gif")));
-    jLabelLluvia4.setIcon(new ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/lluviaGif.gif")));*/
+
+
+    ImageIcon imgMusica = new ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/musicaPerdiste.png"));
+    Image imgMusicaRedimensionada = imgMusica.getImage().getScaledInstance(jLabelMusicaPerdiste.getWidth(), jLabelMusicaPerdiste.getHeight(), Image.SCALE_SMOOTH);
+    jLabelMusicaPerdiste.setIcon(new ImageIcon(imgMusicaRedimensionada));
 }
 
+    private void configurarTeclaEnterParaPausarReanudarMusica() {
+        JRootPane rootPane = this.getRootPane();
+
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("ENTER"), "toggleMusica");
+
+        rootPane.getActionMap().put("toggleMusica", new AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                reproductor.pausarOReanudar(); // método que debes tener en ReproductorMusica
+            }
+        });
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -114,8 +133,9 @@ public class JFrameAnimo extends javax.swing.JFrame {
         jLabelCharco = new javax.swing.JLabel();
         jLabelBarcoSalir = new javax.swing.JLabel();
         jLabelAnimoSombra = new javax.swing.JLabel();
-        jLabelNubes = new javax.swing.JLabel();
         jLabelJugadorSombra = new javax.swing.JLabel();
+        jLabelMusicaPerdiste = new javax.swing.JLabel();
+        jLabelNubes = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setSize(new java.awt.Dimension(1920, 1080));
@@ -184,17 +204,26 @@ public class JFrameAnimo extends javax.swing.JFrame {
         jPanelPrincipal.add(jLabelAnimoSombra);
         jLabelAnimoSombra.setBounds(380, 370, 530, 155);
 
-        jLabelNubes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nubesAzules.png"))); // NOI18N
-        jLabelNubes.setPreferredSize(new java.awt.Dimension(1920, 530));
-        jPanelPrincipal.add(jLabelNubes);
-        jLabelNubes.setBounds(6, 0, 1920, 530);
-
         jLabelJugadorSombra.setFont(new java.awt.Font("Comic Sans MS", 1, 90)); // NOI18N
         jLabelJugadorSombra.setForeground(new java.awt.Color(50, 87, 169));
         jLabelJugadorSombra.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelJugadorSombra.setText("jLabel1");
         jPanelPrincipal.add(jLabelJugadorSombra);
         jLabelJugadorSombra.setBounds(100, 530, 1080, 127);
+
+        jLabelMusicaPerdiste.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/musicaPerdiste.png"))); // NOI18N
+        jLabelMusicaPerdiste.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelMusicaPerdisteMouseClicked(evt);
+            }
+        });
+        jPanelPrincipal.add(jLabelMusicaPerdiste);
+        jLabelMusicaPerdiste.setBounds(1820, 40, 50, 20);
+
+        jLabelNubes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/nubesAzules.png"))); // NOI18N
+        jLabelNubes.setPreferredSize(new java.awt.Dimension(1920, 530));
+        jPanelPrincipal.add(jLabelNubes);
+        jLabelNubes.setBounds(6, 0, 1920, 530);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -223,6 +252,11 @@ public class JFrameAnimo extends javax.swing.JFrame {
         // TODO add your handling code here:
         System.exit(0);
     }//GEN-LAST:event_jLabelBarcoSalirMouseClicked
+
+    private void jLabelMusicaPerdisteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelMusicaPerdisteMouseClicked
+        // TODO add your handling code here:
+        reproductor.alternarMusica();
+    }//GEN-LAST:event_jLabelMusicaPerdisteMouseClicked
 
     /**
      * @param args the command line arguments
@@ -274,6 +308,7 @@ public class JFrameAnimo extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelLluvia1;
     private javax.swing.JLabel jLabelLluvia2;
     private javax.swing.JLabel jLabelLluvia3;
+    private javax.swing.JLabel jLabelMusicaPerdiste;
     private javax.swing.JLabel jLabelNubes;
     private javax.swing.JLabel jLabelParaguasVolverJugar;
     private javax.swing.JLabel jLabelTristeza;

@@ -4,6 +4,7 @@
  */
 package pantallas;
 
+import canciones.ReproductorMusica;
 import java.awt.*;
 import javax.swing.*;
 
@@ -16,7 +17,8 @@ public class JFramePresentacion extends javax.swing.JFrame {
     private JFrameGameScreen gamescreen;
     private JFrameInstrucciones instruccion;
     private JFrameCreditos creditos;
-
+    ReproductorMusica reproductor = ReproductorMusica.getInstancia();
+    
     public void setGamescreen(JFrameGameScreen gamescreen) {
         this.gamescreen = gamescreen;
     }
@@ -38,6 +40,7 @@ public class JFramePresentacion extends javax.swing.JFrame {
      */
     public JFramePresentacion() {
         initComponents();
+        configurarTeclaEnterParaPausarReanudarMusica();
         setExtendedState(JFrame.MAXIMIZED_BOTH); // Pantalla completa
         ajustarComponentes();
         this.setLocationRelativeTo(null);
@@ -69,6 +72,7 @@ public class JFramePresentacion extends javax.swing.JFrame {
         jLabelNube4 = new javax.swing.JLabel();
         jLabelNube5 = new javax.swing.JLabel();
         jLabelTituloDisney = new javax.swing.JLabel();
+        jLabelMusicaPortada = new javax.swing.JLabel();
         jLabelPortada1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -177,6 +181,15 @@ public class JFramePresentacion extends javax.swing.JFrame {
         jPanelPrincipal.add(jLabelTituloDisney);
         jLabelTituloDisney.setBounds(790, 50, 300, 120);
 
+        jLabelMusicaPortada.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/musicaPortada.png"))); // NOI18N
+        jLabelMusicaPortada.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelMusicaPortadaMouseClicked(evt);
+            }
+        });
+        jPanelPrincipal.add(jLabelMusicaPortada);
+        jLabelMusicaPortada.setBounds(1810, 90, 37, 30);
+
         getContentPane().add(jPanelPrincipal);
         jPanelPrincipal.setBounds(0, 0, 1920, 1030);
 
@@ -223,6 +236,11 @@ public class JFramePresentacion extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_jLabelInstruccionesMouseClicked
 
+    private void jLabelMusicaPortadaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelMusicaPortadaMouseClicked
+        // TODO add your handling code here:
+        reproductor.alternarMusica();
+    }//GEN-LAST:event_jLabelMusicaPortadaMouseClicked
+
     private void ajustarComponentes() {
         Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize();   // Calcular el tamaño total de la pantalla
         int anchoPantalla = pantalla.width;
@@ -245,7 +263,7 @@ public class JFramePresentacion extends javax.swing.JFrame {
         jLabelNube4.setBounds((int)((0.6071 + 0.0234) * anchoPantalla), (int)(0.0388 * altoPantalla), (int)(0.0781 * anchoPantalla), (int)(0.1018 * altoPantalla));
         jLabelNube5.setBounds((int)((0.7141 + 0.0234) * anchoPantalla), (int)(0.0388 * altoPantalla), (int)(0.0781 * anchoPantalla), (int)(0.1018 * altoPantalla));
         jLabelNube6.setBounds((int)((0.8061 + 0.0234) * anchoPantalla), (int)(0.0388 * altoPantalla), (int)(0.0781 * anchoPantalla), (int)(0.1018 * altoPantalla));
-
+        jLabelMusicaPortada.setBounds((int)(0.9323 * anchoPantalla),(int)(0.0370 * altoPantalla),(int)(0.0312 * anchoPantalla),(int)(0.1018 * altoPantalla));
         
         //Colocar fuente en los labels de título
         int tamañoBase = altoPantalla; // Puedes usar anchoPantalla si es más determinante
@@ -291,8 +309,25 @@ public class JFramePresentacion extends javax.swing.JFrame {
         jLabelNube4.setIcon(new ImageIcon(imagenNubeRedimensionada));
         jLabelNube5.setIcon(new ImageIcon(imagenNubeRedimensionada));
         jLabelNube6.setIcon(new ImageIcon(imagenNubeRedimensionada));
+        
+        ImageIcon imgMusica = new ImageIcon(getClass().getResource("/Imagenes/disenoPantallas/musicaPortada.png"));
+        Image imgMusicaRedimensionada = imgMusica.getImage().getScaledInstance(jLabelMusicaPortada.getWidth(), jLabelMusicaPortada.getHeight(), Image.SCALE_SMOOTH);
+        jLabelMusicaPortada.setIcon(new ImageIcon(imgMusicaRedimensionada));
     }
     
+    private void configurarTeclaEnterParaPausarReanudarMusica() {
+        JRootPane rootPane = this.getRootPane();
+
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("ENTER"), "toggleMusica");
+
+        rootPane.getActionMap().put("toggleMusica", new AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                reproductor.pausarOReanudar(); // método que debes tener en ReproductorMusica
+            }
+        });
+    }
     /**
      * @param args the command line arguments
      */
@@ -334,6 +369,7 @@ public class JFramePresentacion extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelInstrucciones;
     private javax.swing.JLabel jLabelJugar;
     private javax.swing.JLabel jLabelLamparaGif;
+    private javax.swing.JLabel jLabelMusicaPortada;
     private javax.swing.JLabel jLabelNube1;
     private javax.swing.JLabel jLabelNube2;
     private javax.swing.JLabel jLabelNube3;

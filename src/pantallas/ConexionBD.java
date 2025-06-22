@@ -17,7 +17,7 @@ import java.sql.Statement;
  * @author Joel
  */
 public class ConexionBD {
-    private static final String URL = "jdbc:mysql://localhost:33068/adivina_quien";
+    private static final String URL = "jdbc:mysql://localhost:3306/adivina_quien";
     private static final String USER = "root";
     private static final String PASSWORD = "";
 
