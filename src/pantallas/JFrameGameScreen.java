@@ -857,7 +857,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 if (!gano && paso==1) {
                     Jugador oponente = ConexionBD.buscarPorNombre(jugador1);
                     actualizarDatosJugador(oponente, false, intentosUsados, personajeGanador, 1); //actualizo oponente
-                    registrarPartida(jugador.getNickname(), miPersonajeSecreto.getRutaImagen());
+                    registrarPartida(jugador.getNickname(), personajeGanador);
                     actualizarDatosJugador(jugador, true, 3 - intentosRestantes, personajeGanador, 2); //esto si lo puedo hacer porque se todos estos datos aqui
                 
                     // Enviar Info con los datos de la partida:
@@ -883,7 +883,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     partida.setJugador1(jugador1); //Mi nombre
                     partida.setJugador2(jugador2); // Nombre de mi oponente
                     partida.setGanador(ganador); //quien gano
-                    partida.setPersonajeGanador(getFormatoDeRuta(personajeGanador));//y el personaje que se adivino
+                    partida.setPersonajeGanador(personajeGanador);//y el personaje que se adivino
                     partida.setFecha(new java.sql.Date(System.currentTimeMillis())); // <-- java.sql.Date
 
                     int minutos = crono / 60;
@@ -923,7 +923,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                         jugador.getNickname(),//yo perdedor
                         cliente.getNombreOponente(), //tu oponente ganador
                         cliente.getNombreOponente(), // El oponente ganó (Quien Gana)
-                        miPersonajeSecreto.getNombre(), //personaje secreto de mi el perdedor
+                        miPersonajeSecreto.getRutaImagen(), //personaje secreto de mi" el perdedor
                         crono, //tiempo
                         3,//intentos del perdedor
                         false, // quien envia informacion perdio
