@@ -883,7 +883,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     partida.setJugador1(jugador1); //Mi nombre
                     partida.setJugador2(jugador2); // Nombre de mi oponente
                     partida.setGanador(ganador); //quien gano
-                    partida.setPersonajeGanador(personajeGanador);//y el personaje que se adivino
+                    partida.setPersonajeGanador(getFormatoDeRuta(personajeGanador));//y el personaje que se adivino
                     partida.setFecha(new java.sql.Date(System.currentTimeMillis())); // <-- java.sql.Date
 
                     int minutos = crono / 60;
@@ -1078,8 +1078,9 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     private void actualizarDatosJugador(Jugador jugador, boolean gano, int intentos, String personajeGanador, int num) {
         if(num==1){
             jugador.setJugadorVS(jugador.getNickname());
-        }else{
-            jugador.setJugadorVS(cliente.getNombreOponente());
+        }
+        if(num==2){
+            jugador.setJugadorVS(oponente);
         }
         jugador.setFechaPartida(new java.sql.Date(System.currentTimeMillis()));
         jugador.setTiempo(Time.valueOf(String.format("00:%02d:%02d", crono / 60, crono % 60)));
