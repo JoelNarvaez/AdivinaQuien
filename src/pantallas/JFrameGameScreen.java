@@ -814,7 +814,6 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 if (miPersonajeSecreto.getNombre() != null && miPersonajeSecreto.getNombre().equalsIgnoreCase(nombre)) {
                     // Adivinó correctamente
                     System.out.println(miPersonajeSecreto);
-                    gano = false;
                     areaPreguntas.append("Oponente (adivinó): Acertó \n\n");
                     cliente.enviarMensaje("¡Ganaste!");
                     mostrarPantallaAnimo();
@@ -822,8 +821,8 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     // Enviar Info con los datos del perdedor
                     int intentoslocal = 3 - intentosRestantes;
                     String info = String.format("Info:%s:%s:%s:%s:%d:%d:%b:%d", 
-                        jugador.getNickname(),//yo
-                        cliente.getNombreOponente(), //tu 
+                        jugador.getNickname(),//jugador
+                        cliente.getNombreOponente(), //oponente
                         cliente.getNombreOponente(), // El oponente ganó (Quien Gana)
                         miPersonajeSecreto.getNombre(), //personaje secreto de mi el perdedor
                         crono, //tiempo
@@ -832,10 +831,6 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                         1
                     );
                     cliente.enviarMensaje(info);
-//                    registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
-//                    actualizarDatosJugador(jugador, gano, 3 - intentosRestantes, miPersonajeSecreto.getNombre());
-//                    actualizarDatosJugador(ConexionBD.buscarPorNombre(jugador.getJugadorVS()), !gano, 3 - intentosRestantes, miPersonajeSecreto.getNombre() );
-                    // Enviar copia del jugador al oponente
                 } else {
                     cliente.enviarMensaje("mensaje:No");
                     cliente.enviarMensaje("¡Ánimo!");
@@ -847,6 +842,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 return;
             }
             
+
             if (texto.startsWith("Info:")) {
                 String[] datos = texto.split(":");
                 String jugador1 = datos[1];
@@ -857,10 +853,10 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 int intentosUsados = Integer.parseInt(datos[6]);
                 boolean gano = Boolean.parseBoolean(datos[7]);
                 int paso = Integer.parseInt(datos[8]);
-                
+
                 if (!gano && paso==1) {
                     Jugador oponente = ConexionBD.buscarPorNombre(jugador1);
-                    actualizarDatosJugador(oponente, gano, intentosUsados, miPersonajeSecreto.getNombre());
+                    actualizarDatosJugador(oponente, false, intentosUsados, miPersonajeSecreto.getNombre());
                     // Enviar Info con los datos de la partida:
                     int intentosLocal = 3 - intentosRestantes;
                     String info = String.format("Info:%s:%s:%s:%s:%d:%d:%b:%d", 
@@ -876,8 +872,8 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     cliente.enviarMensaje(info);
                     
                 }
-                if (!gano && paso==2) {
-                    
+                // Paso 2: Ganador envió su Info, ahora registrar partida completo
+                if (!gano && paso==2) {                   
                     Jugador oponente = ConexionBD.buscarPorNombre(jugador2);
                     
                     Partida partida = new Partida();
@@ -893,8 +889,8 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     partida.setDuracion(duracion);
 
                     ConexionBD.insertarPartida(partida);
-                    actualizarDatosJugador(jugador, gano, 3, personajeGanador);
-                    actualizarDatosJugador(oponente, !gano, intentosUsados, personajeGanador);
+                    actualizarDatosJugador(jugador, false, 3, personajeGanador);
+                    actualizarDatosJugador(oponente, true, intentosUsados, personajeGanador);
                 }
 
                 return;
@@ -925,8 +921,8 @@ public class JFrameGameScreen extends javax.swing.JFrame {
 
                     // Enviar Info con los datos de la partida:
                     String info = String.format("Info:%s:%s:%s:%s:%d:%d:%b:%d", 
-                        jugador.getNickname(),//yo
-                        cliente.getNombreOponente(), //tu 
+                        jugador.getNickname(),//yo perdedor
+                        cliente.getNombreOponente(), //tu oponente ganador
                         cliente.getNombreOponente(), // El oponente ganó (Quien Gana)
                         miPersonajeSecreto.getNombre(), //personaje secreto de mi el perdedor
                         crono, //tiempo

@@ -94,9 +94,11 @@ public void escucharMensajes(Runnable onStart, Runnable onTuTurno, Runnable onEs
                     } else if (str.startsWith("adivinar:")) {
                         String texto = str.substring(9); // quitar "adivinar:"
                         if (onMensaje != null) onMensaje.accept("adivinar:" + texto);
-                    } else if (str.equals("¡Ganaste!") || str.equals("¡Ánimo!") || str.equals("Info:") ) {
+                    } else if (str.equals("¡Ganaste!") || str.equals("¡Ánimo!")) {
                         if (onMensaje != null) onMensaje.accept(str);
-                    } 
+                    } else if (str.startsWith("Info:")) {
+                        if (onMensaje != null) onMensaje.accept(str);
+                    }
                 }
 
                 else if ("oponenteDesconectado".equals(mensaje)) {
@@ -125,22 +127,6 @@ public void escucharMensajes(Runnable onStart, Runnable onTuTurno, Runnable onEs
             }
         } catch (IOException e) {
             System.out.println("Error al enviar mensaje al servidor.");
-            e.printStackTrace();
-        }
-    }
-    
-    public void setOnMensajeObjeto(String etiqueta, Consumer<Object> handler) {
-        handlersObjeto.put(etiqueta, handler);
-    }
-
-    public void enviarObjeto(String etiqueta, Object objeto) {
-        try {
-            if (out != null) {
-                out.writeObject(new Object[]{etiqueta, objeto});
-                out.flush();
-            }
-        } catch (IOException e) {
-            System.out.println("Error al enviar objeto etiquetado.");
             e.printStackTrace();
         }
     }
