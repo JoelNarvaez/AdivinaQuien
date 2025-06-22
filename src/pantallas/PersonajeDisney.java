@@ -74,7 +74,7 @@ public class PersonajeDisney implements Serializable {
         new PersonajeDisney("Ralph", "/Imagenes/Personajes/ralph.png"),
         new PersonajeDisney("Rapunzel", "/Imagenes/Personajes/rapunzel.png"),
         new PersonajeDisney("Russell", "/Imagenes/Personajes/russell.png"),
-        new PersonajeDisney("Tzaran", "/Imagenes/Personajes/tarzan.png"),
+        new PersonajeDisney("Tarzan", "/Imagenes/Personajes/tarzan.png"),
         new PersonajeDisney("Tiana", "/Imagenes/Personajes/tiana.png"),
         new PersonajeDisney("Vanellope", "/Imagenes/Personajes/vanellope.png"),
         new PersonajeDisney("Violeta", "/Imagenes/Personajes/violeta.png"),
