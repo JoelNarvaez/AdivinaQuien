@@ -767,7 +767,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 if (miPersonajeSecreto.getNombre() != null && miPersonajeSecreto.getNombre().equalsIgnoreCase(nombre)) {
                     // Adivinó correctamente
                     System.out.println(miPersonajeSecreto);
-                    gano = true;
+                    gano = false;
                     areaPreguntas.append("Oponente (adivinó): Acertó \n\n");
                     cliente.enviarMensaje("¡Ganaste!");
 
