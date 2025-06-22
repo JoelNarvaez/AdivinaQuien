@@ -86,6 +86,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     this.seleccionados = seleccionados;
     this.cliente = cliente;
     this.oponente = nombreOponente;
+    configurarTeclaEnterParaPausarReanudarMusica();
     setTitle("Adivina Quién"); 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -395,7 +396,6 @@ public class JFrameGameScreen extends javax.swing.JFrame {
             String[][] botones = {
                 {"musica.png", "Música"},
                 {"ins.png", "Instrucciones"},
-                {"menu.png", "Menú"},
                 {"cancelar.png", "Cancelar"}
             };
 
@@ -453,6 +453,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                             instru.setAlwaysOnTop(false);
                     });
                     case "Cancelar" -> btn.addActionListener(ev -> dialogo.dispose());
+                    case "Música" -> btn.addActionListener(evt -> reproductor.alternarMusica());
                 }
                 panelBoton.add(btn);
                 panelBoton.add(Box.createVerticalStrut(10));
