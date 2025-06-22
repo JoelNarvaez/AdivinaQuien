@@ -883,7 +883,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     partida.setJugador1(jugador1); //Mi nombre
                     partida.setJugador2(jugador2); // Nombre de mi oponente
                     partida.setGanador(ganador); //quien gano
-                    partida.setPersonajeGanador(personajeGanador);//y el personaje que se adivino
+                    partida.setPersonajeGanador(getFormatoDeRuta(personajeGanador));//y el personaje que se adivino
                     partida.setFecha(new java.sql.Date(System.currentTimeMillis())); // <-- java.sql.Date
 
                     int minutos = crono / 60;
@@ -902,10 +902,6 @@ public class JFrameGameScreen extends javax.swing.JFrame {
             if (texto.equalsIgnoreCase("¡Ganaste!")) {
                 areaPreguntas.append("Oponente: tu oponente perdió\n");
                 mostrarPantallaFelicidades();
-                
-                //registrarPartida(jugador.getNickname(), miPersonajeSecreto.getRutaImagen());
-                //actualizarDatosJugador(jugador, true, 3 - intentosRestantes, miPersonajeSecreto.getNombre(), 2); //esto si lo puedo hacer porque se todos estos datos aqui
-                
                 return;
             }
             
@@ -1110,6 +1106,10 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         
     }
     
+    String getFormatoDeRuta(String nombre){
+        String nombreRuta = nombre.toLowerCase();
+        return "/Imagenes/Personajes/"+nombreRuta+".png";
+    }
 
     private void configurarTeclaEnterParaPausarReanudarMusica() {
         JRootPane rootPane = this.getRootPane();
