@@ -817,10 +817,12 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     gano = false;
                     areaPreguntas.append("Oponente (adivinó): Acertó \n\n");
                     cliente.enviarMensaje("¡Ganaste!");
-                    cliente.enviarObjeto("jugadorOponente", jugador);
                     mostrarPantallaAnimo();
                     registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
-                    actualizarDatosJugador(jugador, gano, intentosRestantes, miPersonajeSecreto.getNombre());
+                    actualizarDatosJugador(jugador, gano, 3 - intentosRestantes, miPersonajeSecreto.getNombre());
+                    // Enviar copia del jugador al oponente
+                    Jugador copiaParaOponente = generarCopiaParaOponente(jugador, false, 3 - intentosRestantes, miPersonajeSecreto.getNombre());
+                    cliente.enviarObjeto("jugadorOponente", copiaParaOponente);
                 } else {
                     cliente.enviarMensaje("mensaje:No");
                     cliente.enviarMensaje("¡Ánimo!");
@@ -835,10 +837,11 @@ public class JFrameGameScreen extends javax.swing.JFrame {
             if (texto.equalsIgnoreCase("¡Ganaste!")) {
                 areaPreguntas.append("Oponente: Gasto sus 3 oportunidades\n");
                 mostrarPantallaFelicidades();
-                gano = true;
-                cliente.enviarObjeto("jugadorOponente", jugador);
                 registrarPartida(jugador.getNickname(), miPersonajeSecreto.getRutaImagen());
-                actualizarDatosJugador(jugador, gano, intentosRestantes, miPersonajeSecreto.getNombre());
+                actualizarDatosJugador(jugador, true, 3 - intentosRestantes, miPersonajeSecreto.getNombre());
+                // Enviar copia del jugador al oponente
+                Jugador copiaParaOponente = generarCopiaParaOponente(jugador, true, 3 - intentosRestantes, miPersonajeSecreto.getNombre());
+                cliente.enviarObjeto("jugadorOponente", copiaParaOponente);
                 return;
             }
             
@@ -852,10 +855,11 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     areaPreguntas.append("Tú: Te acabaste tus 3 intentos\n");
                     mostrarPantallaAnimo();
                     cliente.enviarMensaje("¡Ganaste!"); // ← El oponente gana si tú fallaste el último intento
-                    //aqui podriamos enviar el objeto para actualizar la informacion del oponente con mi informacion
-                    cliente.enviarObjeto("jugadorOponente", jugador);
                     registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
                     actualizarDatosJugador(jugador, false, 3 , miPersonajeSecreto.getNombre());
+                    // Enviar copia del jugador al oponente
+                    Jugador copiaParaOponente = generarCopiaParaOponente(jugador, false, 3, miPersonajeSecreto.getNombre());
+                    cliente.enviarObjeto("jugadorOponente", copiaParaOponente);
                 } else {
                     // Todavía hay intentos, sigue el juego
                     habilitarPregunta(false);
@@ -1047,6 +1051,27 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         } else {
             System.out.println("Jugador actualizado correctamente.");
         }
+    }
+    
+    private Jugador generarCopiaParaOponente(Jugador original, boolean gano, int intentos, String personajeGanador) {
+        Jugador copia = new Jugador();
+
+        copia.setNickname(original.getNickname()); // tu nombre
+        copia.setProfileIcon(original.getProfileIcon());
+        copia.setEdad(original.getEdad());
+
+        // Actualizamos según resultado
+        copia.setVictorias(gano ? 1 : 0);
+        copia.setDerrotas(gano ? 0 : 1);
+
+        copia.setRanking(gano ? 50 : -50); // solo se suma/resta en el receptor
+        copia.setJugadorVS(cliente.getNombreOponente());
+        copia.setFechaPartida(new java.sql.Date(System.currentTimeMillis()));
+        copia.setTiempo(Time.valueOf(String.format("00:%02d:%02d", crono / 60, crono % 60)));
+        copia.setIntentos(intentos);
+        copia.setPersonajeAdivinado(personajeGanador);
+
+        return copia;
     }
 
     private void configurarTeclaEnterParaPausarReanudarMusica() {
