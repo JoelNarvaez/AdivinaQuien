@@ -434,7 +434,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 etiqueta.setAlignmentX(Component.CENTER_ALIGNMENT);
                 etiqueta.setMaximumSize(new Dimension(110, 20));
                 etiqueta.setHorizontalAlignment(SwingConstants.CENTER);
-
+                
                 // eventos
                 switch (texto) {
                     case "Instrucciones" -> btn.addActionListener(ev ->{
@@ -464,6 +464,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 } else {
                     panelInferior.add(panelBoton);
                 }
+                configurarTeclaEnterParaPausarReanudarMusica();
             }
 
             panelInferior.setMaximumSize(gridPanel.getMaximumSize());
