@@ -878,8 +878,8 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         
         cliente.setOnMensajeObjeto("jugadorOponente", objeto -> SwingUtilities.invokeLater(() -> {
             if (objeto instanceof Jugador oponenteRecibido) {
-            // Verifica si ya existe en la base de datos local
-            Jugador oponenteLocal = ConexionBD.buscarPorNombre(oponenteRecibido.getNickname());
+                // Verifica si ya existe en la base de datos local
+                Jugador oponenteLocal = ConexionBD.buscarPorNombre(oponenteRecibido.getNickname());
 
                 if (oponenteLocal == null) {
                     // No existe → lo insertamos tal cual
@@ -892,6 +892,12 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 } else {
                     // Ya existe → lo actualizamos con la nueva info
                     oponenteRecibido.setId(oponenteLocal.getId()); // Asegúrate de mantener el ID correcto
+
+                    // SUMAR estadística al jugador existente
+                    oponenteRecibido.setVictorias(oponenteLocal.getVictorias() + oponenteRecibido.getVictorias());
+                    oponenteRecibido.setDerrotas(oponenteLocal.getDerrotas() + oponenteRecibido.getDerrotas());
+                    oponenteRecibido.setRanking(oponenteLocal.getRanking() + oponenteRecibido.getRanking());
+
                     boolean actualizado = ConexionBD.actualizarJugador(oponenteRecibido, oponenteRecibido.getId());
                     if (actualizado) {
                         System.out.println("Se actualizó el oponente en la base de datos local: " + oponenteRecibido.getNickname());
