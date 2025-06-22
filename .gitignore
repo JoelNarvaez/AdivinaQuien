@@ -6,3 +6,4 @@ build/
 # Ignorar configuraciones privadas de NetBeans
 nbproject/private/
 
+dist/ProyectoFinal.jar
