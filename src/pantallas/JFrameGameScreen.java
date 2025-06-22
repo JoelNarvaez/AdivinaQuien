@@ -856,14 +856,17 @@ public class JFrameGameScreen extends javax.swing.JFrame {
 
                 if (!gano && paso==1) {
                     Jugador oponente = ConexionBD.buscarPorNombre(jugador1);
-                    actualizarDatosJugador(oponente, false, intentosUsados, miPersonajeSecreto.getNombre());
+                    actualizarDatosJugador(oponente, false, intentosUsados, personajeGanador, 1); //actualizo oponente
+                    registrarPartida(jugador.getNickname(), miPersonajeSecreto.getRutaImagen());
+                    actualizarDatosJugador(jugador, true, 3 - intentosRestantes, personajeGanador, 2); //esto si lo puedo hacer porque se todos estos datos aqui
+                
                     // Enviar Info con los datos de la partida:
                     int intentosLocal = 3 - intentosRestantes;
                     String info = String.format("Info:%s:%s:%s:%s:%d:%d:%b:%d", 
                         jugador1,//perdedor
                         jugador2, //ganador 
                         ganador, // El oponente ganó (Quien Gana)
-                        miPersonajeSecreto.getNombre(), //personaje secreto del ganador
+                        personajeGanador, //personaje secreto del ganador
                         crono, //tiempo
                         intentosLocal,//intentos del ganador
                         false, // quien envia informacion perdio
@@ -889,8 +892,8 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     partida.setDuracion(duracion);
 
                     ConexionBD.insertarPartida(partida);
-                    actualizarDatosJugador(jugador, false, 3, personajeGanador);
-                    actualizarDatosJugador(oponente, true, intentosUsados, personajeGanador);
+                    actualizarDatosJugador(jugador, false, 3, personajeGanador , 2);
+                    actualizarDatosJugador(oponente, true, intentosUsados, personajeGanador, 1);
                 }
 
                 return;
@@ -900,8 +903,8 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 areaPreguntas.append("Oponente: tu oponente perdió\n");
                 mostrarPantallaFelicidades();
                 
-                registrarPartida(jugador.getNickname(), miPersonajeSecreto.getRutaImagen());
-                actualizarDatosJugador(jugador, true, 3 - intentosRestantes, miPersonajeSecreto.getNombre()); //esto si lo puedo hacer porque se todos estos datos aqui
+                //registrarPartida(jugador.getNickname(), miPersonajeSecreto.getRutaImagen());
+                //actualizarDatosJugador(jugador, true, 3 - intentosRestantes, miPersonajeSecreto.getNombre(), 2); //esto si lo puedo hacer porque se todos estos datos aqui
                 
                 return;
             }
@@ -1076,12 +1079,16 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         ConexionBD.insertarPartida(partida);
     }
 
-    private void actualizarDatosJugador(Jugador jugador, boolean gano, int intentos, String personajeGanador) {
-        jugador.setJugadorVS(cliente.getNombreOponente());
+    private void actualizarDatosJugador(Jugador jugador, boolean gano, int intentos, String personajeGanador, int num) {
+        if(num==1){
+            jugador.setJugadorVS(jugador.getNickname());
+        }else{
+            jugador.setJugadorVS(cliente.getNombreOponente());
+        }
         jugador.setFechaPartida(new java.sql.Date(System.currentTimeMillis()));
         jugador.setTiempo(Time.valueOf(String.format("00:%02d:%02d", crono / 60, crono % 60)));
         jugador.setIntentos(intentos);
-
+        
 
         if (gano) {
             jugador.setVictorias(jugador.getVictorias() + 1);
