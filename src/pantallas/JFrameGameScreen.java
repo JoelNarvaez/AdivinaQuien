@@ -814,17 +814,16 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 if (miPersonajeSecreto.getNombre() != null && miPersonajeSecreto.getNombre().equalsIgnoreCase(nombre)) {
                     // Adivinó correctamente
                     System.out.println(miPersonajeSecreto);
-                    gano = false; // ← El jugador local perdió (porque el oponente acertó)
+                    gano = false;
                     areaPreguntas.append("Oponente (adivinó): Acertó \n\n");
                     cliente.enviarMensaje("¡Ganaste!");
-                    
-                    cliente.enviarObjeto("jugadorOponente", jugador);
-                    //aqui podriamos enviar el objeto para actualizar la informacion del oponente con mi informacion
+
                     mostrarPantallaAnimo();
                     registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
-                    actualizarDatosJugador(jugador, gano, 3 - intentosRestantes , miPersonajeSecreto.getNombre());
+                    actualizarDatosJugador(jugador, gano, intentosRestantes, miPersonajeSecreto.getNombre());
                 } else {
                     cliente.enviarMensaje("mensaje:No");
+                    cliente.enviarMensaje("Oportunidad");
                     areaPreguntas.append("Oponente (adivinó): No acertó \n\n");
                     System.out.println(miPersonajeSecreto);
                     habilitarPregunta(true);
@@ -837,30 +836,13 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 areaPreguntas.append("Oponente: Gasto sus 3 oportunidades\n");
                 mostrarPantallaFelicidades();
                 gano = true;
-                //aqui podriamos enviar el objeto para actualizar la informacion del oponente con mi informacion
-                cliente.enviarObjeto("jugadorOponente", jugador);
                 registrarPartida(jugador.getNickname(), miPersonajeSecreto.getRutaImagen());
-                actualizarDatosJugador(jugador, gano, 3 - intentosRestantes , miPersonajeSecreto.getNombre());
+                actualizarDatosJugador(jugador, gano, intentosRestantes, miPersonajeSecreto.getNombre());
                 return;
             }
             
-            //los If es lo que se hace local lo que se recibe de mensaje y entonces se actua deacuerdo a ello
-            if (!texto.equalsIgnoreCase("Sí") && !texto.equalsIgnoreCase("No") && !texto.equalsIgnoreCase("turnoFinalizado")) {
-                areaPreguntas.append("Oponente (pregunta): " + texto + "\n");
-                mostrarDialogoRespuesta(texto);
-                
-            } else if (texto.equalsIgnoreCase("Sí")) {
-                areaPreguntas.append("Oponente (respuesta): Sí\n\n");
-                
-                // El jugador acertó, ganó
-                mostrarPantallaFelicidades();
-                cliente.enviarObjeto("jugadorOponente", jugador);
-                //aqui podriamos enviar el objeto para actualizar la informacion del oponente con mi informacion
-                registrarPartida(jugador.getNickname(), miPersonajeSecreto.getRutaImagen());
-                actualizarDatosJugador(jugador, true , 3 - intentosRestantes , miPersonajeSecreto.getNombre());
-
-            } else if (texto.equalsIgnoreCase("No")) {
-                areaPreguntas.append("Oponente (respuesta): No\n\n");
+            if (texto.equalsIgnoreCase("Oportunidad")) {
+                areaPreguntas.append("Tú: Gasto de oportunidad\n\n");
 
                 intentosRestantes--;
                 intentos.setText("Intentos restantes: " + intentosRestantes);
@@ -877,6 +859,14 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     // Todavía hay intentos, sigue el juego
                     habilitarPregunta(false);
                 }
+            }
+            
+            if (!texto.equalsIgnoreCase("Sí") && !texto.equalsIgnoreCase("No") && !texto.equalsIgnoreCase("turnoFinalizado")) {
+                areaPreguntas.append("Oponente (pregunta): " + texto + "\n");
+                mostrarDialogoRespuesta(texto);
+                
+            } else if (texto.equalsIgnoreCase("Sí") || texto.equalsIgnoreCase("No")) {
+                areaPreguntas.append("Oponente (respuesta): " + texto + "\n\n");
             }
         }));
         

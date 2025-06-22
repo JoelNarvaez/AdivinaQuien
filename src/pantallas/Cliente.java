@@ -94,7 +94,7 @@ public void escucharMensajes(Runnable onStart, Runnable onTuTurno, Runnable onEs
                     } else if (str.startsWith("adivinar:")) {
                         String texto = str.substring(9); // quitar "adivinar:"
                         if (onMensaje != null) onMensaje.accept("adivinar:" + texto);
-                    } else if (str.equals("¡Ganaste!") || str.equals("¡Ánimo!")) {
+                    } else if (str.equals("¡Ganaste!") || str.equals("¡Ánimo!") || str.equals("Oportunidad")) {
                         if (onMensaje != null) onMensaje.accept(str);
                     }
                 }
