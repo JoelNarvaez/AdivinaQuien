@@ -817,6 +817,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     gano = false; // ← El jugador local perdió (porque el oponente acertó)
                     areaPreguntas.append("Oponente (adivinó): Acertó \n\n");
                     cliente.enviarMensaje("¡Ganaste!");
+                    
                     cliente.enviarObjeto("jugadorOponente", jugador);
                     //aqui podriamos enviar el objeto para actualizar la informacion del oponente con mi informacion
                     mostrarPantallaAnimo();
@@ -837,6 +838,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 mostrarPantallaFelicidades();
                 gano = true;
                 //aqui podriamos enviar el objeto para actualizar la informacion del oponente con mi informacion
+                cliente.enviarObjeto("jugadorOponente", jugador);
                 registrarPartida(jugador.getNickname(), miPersonajeSecreto.getRutaImagen());
                 actualizarDatosJugador(jugador, gano, 3 - intentosRestantes , miPersonajeSecreto.getNombre());
                 return;
