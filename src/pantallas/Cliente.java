@@ -94,9 +94,9 @@ public void escucharMensajes(Runnable onStart, Runnable onTuTurno, Runnable onEs
                     } else if (str.startsWith("adivinar:")) {
                         String texto = str.substring(9); // quitar "adivinar:"
                         if (onMensaje != null) onMensaje.accept("adivinar:" + texto);
-                    } else if (str.equals("¡Ganaste!") || str.equals("¡Ánimo!")) {
+                    } else if (str.equals("¡Ganaste!") || str.equals("¡Ánimo!") || str.equals("Info:") ) {
                         if (onMensaje != null) onMensaje.accept(str);
-                    }
+                    } 
                 }
 
                 else if ("oponenteDesconectado".equals(mensaje)) {
@@ -104,15 +104,6 @@ public void escucharMensajes(Runnable onStart, Runnable onTuTurno, Runnable onEs
                     // Aquí puedes cerrar el juego o mostrar una alerta
                 }
                 
-                else if (mensaje instanceof Object[] array && array.length == 2 && array[0] instanceof String etiqueta) {
-                    Object contenido = array[1];
-                    Consumer<Object> handler = handlersObjeto.get(etiqueta);
-                    if (handler != null) {
-                        handler.accept(contenido);
-                    } else {
-                        System.out.println("No se encontró handler para etiqueta: " + etiqueta);
-                    }
-                }
                 // Otros posibles mensajes
             }
         } catch (EOFException e) {

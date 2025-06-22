@@ -818,9 +818,23 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     areaPreguntas.append("Oponente (adivinó): Acertó \n\n");
                     cliente.enviarMensaje("¡Ganaste!");
                     mostrarPantallaAnimo();
-                    registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
-                    actualizarDatosJugador(jugador, gano, 3 - intentosRestantes, miPersonajeSecreto.getNombre());
-                    actualizarDatosJugador(ConexionBD.buscarPorNombre(jugador.getJugadorVS()), !gano, 3 - intentosRestantes, miPersonajeSecreto.getNombre() );
+                    
+                    // Enviar Info con los datos del perdedor
+                    int intentoslocal = 3 - intentosRestantes;
+                    String info = String.format("Info:%s:%s:%s:%s:%d:%d:%b:%d", 
+                        jugador.getNickname(),//yo
+                        cliente.getNombreOponente(), //tu 
+                        cliente.getNombreOponente(), // El oponente ganó (Quien Gana)
+                        miPersonajeSecreto.getNombre(), //personaje secreto de mi el perdedor
+                        crono, //tiempo
+                        intentoslocal,//intentos del perdedor
+                        false, // quien envia informacion perdio
+                        1
+                    );
+                    cliente.enviarMensaje(info);
+//                    registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
+//                    actualizarDatosJugador(jugador, gano, 3 - intentosRestantes, miPersonajeSecreto.getNombre());
+//                    actualizarDatosJugador(ConexionBD.buscarPorNombre(jugador.getJugadorVS()), !gano, 3 - intentosRestantes, miPersonajeSecreto.getNombre() );
                     // Enviar copia del jugador al oponente
                 } else {
                     cliente.enviarMensaje("mensaje:No");
@@ -832,17 +846,71 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 }
                 return;
             }
+            
+            if (texto.startsWith("Info:")) {
+                String[] datos = texto.split(":");
+                String jugador1 = datos[1];
+                String jugador2 = datos[2];
+                String ganador = datos[3];
+                String personajeGanador = datos[4];
+                int crono = Integer.parseInt(datos[5]);
+                int intentosUsados = Integer.parseInt(datos[6]);
+                boolean gano = Boolean.parseBoolean(datos[7]);
+                int paso = Integer.parseInt(datos[8]);
+                
+                if (!gano && paso==1) {
+                    Jugador oponente = ConexionBD.buscarPorNombre(jugador1);
+                    actualizarDatosJugador(oponente, gano, intentosUsados, miPersonajeSecreto.getNombre());
+                    // Enviar Info con los datos de la partida:
+                    int intentosLocal = 3 - intentosRestantes;
+                    String info = String.format("Info:%s:%s:%s:%s:%d:%d:%b:%d", 
+                        jugador1,//perdedor
+                        jugador2, //ganador 
+                        ganador, // El oponente ganó (Quien Gana)
+                        miPersonajeSecreto.getNombre(), //personaje secreto del ganador
+                        crono, //tiempo
+                        intentosLocal,//intentos del ganador
+                        false, // quien envia informacion perdio
+                        2 //paso 1 -> 2
+                    );
+                    cliente.enviarMensaje(info);
+                    
+                }
+                if (!gano && paso==2) {
+                    
+                    Jugador oponente = ConexionBD.buscarPorNombre(jugador2);
+                    
+                    Partida partida = new Partida();
+                    partida.setJugador1(jugador1); //Mi nombre
+                    partida.setJugador2(jugador2); // Nombre de mi oponente
+                    partida.setGanador(ganador); //quien gano
+                    partida.setPersonajeGanador(personajeGanador);//y el personaje que se adivino
+                    partida.setFecha(new java.sql.Date(System.currentTimeMillis())); // <-- java.sql.Date
+
+                    int minutos = crono / 60;
+                    int segundos = crono % 60;
+                    Time duracion = Time.valueOf(String.format("00:%02d:%02d", minutos, segundos));
+                    partida.setDuracion(duracion);
+
+                    ConexionBD.insertarPartida(partida);
+                    actualizarDatosJugador(jugador, gano, 3, personajeGanador);
+                    actualizarDatosJugador(oponente, !gano, intentosUsados, personajeGanador);
+                }
+
+                return;
+            }
 
             if (texto.equalsIgnoreCase("¡Ganaste!")) {
-                areaPreguntas.append("Oponente: Gasto sus 3 oportunidades\n");
+                areaPreguntas.append("Oponente: tu oponente perdió\n");
                 mostrarPantallaFelicidades();
+                
                 registrarPartida(jugador.getNickname(), miPersonajeSecreto.getRutaImagen());
-                actualizarDatosJugador(jugador, true, 3 - intentosRestantes, miPersonajeSecreto.getNombre());
-                actualizarDatosJugador(ConexionBD.buscarPorNombre(jugador.getJugadorVS()), false, 3 - intentosRestantes, miPersonajeSecreto.getNombre() );
+                actualizarDatosJugador(jugador, true, 3 - intentosRestantes, miPersonajeSecreto.getNombre()); //esto si lo puedo hacer porque se todos estos datos aqui
+                
                 return;
             }
             
-            if (texto.equalsIgnoreCase("¡Ánimo!")) {
+            if (texto.equalsIgnoreCase("¡Ánimo!")) { //yo se que perdi
                 areaPreguntas.append("Tú: Gasto de oportunidad\n\n");
 
                 intentosRestantes--;
@@ -851,13 +919,24 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 if (intentosRestantes == 0) {
                     areaPreguntas.append("Tú: Te acabaste tus 3 intentos\n");
                     mostrarPantallaAnimo();
-                    cliente.enviarMensaje("¡Ganaste!"); // ← El oponente gana si tú fallaste el último intento
-                    registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
-                    actualizarDatosJugador(jugador, false, 3 , miPersonajeSecreto.getNombre());
-                    actualizarDatosJugador(ConexionBD.buscarPorNombre(jugador.getJugadorVS()), true, 3 - intentosRestantes, miPersonajeSecreto.getNombre() );
-                    // Enviar copia del jugador al oponente
-                    
-                } else {
+
+                    // Avisas al oponente que ganó:
+                    cliente.enviarMensaje("¡Ganaste!"); 
+
+                    // Enviar Info con los datos de la partida:
+                    String info = String.format("Info:%s:%s:%s:%s:%d:%d:%b:%d", 
+                        jugador.getNickname(),//yo
+                        cliente.getNombreOponente(), //tu 
+                        cliente.getNombreOponente(), // El oponente ganó (Quien Gana)
+                        miPersonajeSecreto.getNombre(), //personaje secreto de mi el perdedor
+                        crono, //tiempo
+                        3,//intentos del perdedor
+                        false, // quien envia informacion perdio
+                        1
+                    );
+                    cliente.enviarMensaje(info);
+
+                }else {
                     // Todavía hay intentos, sigue el juego
                     habilitarPregunta(false);
                 }
@@ -870,38 +949,6 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 
             } else if (texto.equalsIgnoreCase("Sí") || texto.equalsIgnoreCase("No")) {
                 areaPreguntas.append("Oponente (respuesta): " + texto + "\n\n");
-            }
-        }));
-        
-        cliente.setOnMensajeObjeto("jugadorOponente", objeto -> SwingUtilities.invokeLater(() -> {
-            if (objeto instanceof Jugador oponenteRecibido) {
-                // Verifica si ya existe en la base de datos local
-                Jugador oponenteLocal = ConexionBD.buscarPorNombre(oponenteRecibido.getNickname());
-
-                if (oponenteLocal == null) {
-                    // No existe → lo insertamos tal cual
-                    boolean insertado = ConexionBD.insertarJugador(oponenteRecibido);
-                    if (insertado) {
-                        System.out.println("Se insertó el oponente en la base de datos local: " + oponenteRecibido.getNickname());
-                    } else {
-                        System.out.println("No se pudo insertar el oponente.");
-                    }
-                } else {
-                    // Ya existe → lo actualizamos con la nueva info
-                    oponenteRecibido.setId(oponenteLocal.getId()); // Asegúrate de mantener el ID correcto
-
-                    // SUMAR estadística al jugador existente
-                    oponenteRecibido.setVictorias(oponenteLocal.getVictorias() + oponenteRecibido.getVictorias());
-                    oponenteRecibido.setDerrotas(oponenteLocal.getDerrotas() + oponenteRecibido.getDerrotas());
-                    oponenteRecibido.setRanking(oponenteLocal.getRanking() + oponenteRecibido.getRanking());
-
-                    boolean actualizado = ConexionBD.actualizarJugador(oponenteRecibido, oponenteRecibido.getId());
-                    if (actualizado) {
-                        System.out.println("Se actualizó el oponente en la base de datos local: " + oponenteRecibido.getNickname());
-                    } else {
-                        System.out.println("No se pudo actualizar el oponente.");
-                    }
-                }
             }
         }));
         
@@ -1017,10 +1064,10 @@ public class JFrameGameScreen extends javax.swing.JFrame {
 
     private void registrarPartida(String ganador, String personajeGanador) {
         Partida partida = new Partida();
-        partida.setJugador1(jugador.getNickname());
-        partida.setJugador2(cliente.getNombreOponente()); // <- lo tienes que tener como variable
-        partida.setGanador(ganador);
-        partida.setPersonajeGanador(personajeGanador);
+        partida.setJugador1(jugador.getNickname()); //Mi nombre
+        partida.setJugador2(cliente.getNombreOponente()); // Nombre de mi oponente
+        partida.setGanador(ganador); //quien gano
+        partida.setPersonajeGanador(personajeGanador);//y el personaje que se adivino
 
         // Usa lo que ya tienes
         partida.setFecha(new java.sql.Date(System.currentTimeMillis())); // <-- java.sql.Date
