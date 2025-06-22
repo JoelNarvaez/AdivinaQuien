@@ -817,7 +817,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     gano = false;
                     areaPreguntas.append("Oponente (adivinó): Acertó \n\n");
                     cliente.enviarMensaje("¡Ganaste!");
-
+                    cliente.enviarObjeto("jugadorOponente", jugador);
                     mostrarPantallaAnimo();
                     registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
                     actualizarDatosJugador(jugador, gano, intentosRestantes, miPersonajeSecreto.getNombre());
@@ -836,6 +836,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 areaPreguntas.append("Oponente: Gasto sus 3 oportunidades\n");
                 mostrarPantallaFelicidades();
                 gano = true;
+                cliente.enviarObjeto("jugadorOponente", jugador);
                 registrarPartida(jugador.getNickname(), miPersonajeSecreto.getRutaImagen());
                 actualizarDatosJugador(jugador, gano, intentosRestantes, miPersonajeSecreto.getNombre());
                 return;
@@ -859,6 +860,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     // Todavía hay intentos, sigue el juego
                     habilitarPregunta(false);
                 }
+                return;
             }
             
             if (!texto.equalsIgnoreCase("Sí") && !texto.equalsIgnoreCase("No") && !texto.equalsIgnoreCase("turnoFinalizado")) {
