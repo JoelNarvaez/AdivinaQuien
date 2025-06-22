@@ -646,20 +646,11 @@ public class JFrameGameScreen extends javax.swing.JFrame {
             cliente.enviarMensaje("adivinar:" + nombre);
             areaPreguntas.append("Tú (adivinaste): ¿Es " + nombre + "?\n");
             
-            
-
             // No termina turno aún, espera respuesta del oponente
             habilitarPregunta(false);
             esMiTurno = false;
             cliente.enviarMensaje("turnoFinalizado");
             
-//            if (intentosRestantes == 0) { 
-//                areaPreguntas.append("Tú: Te acabste tus 3 intentos");
-//                mostrarPantallaAnimo();
-//                cliente.enviarMensaje("¡Ganaste!");
-//                registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
-//                actualizarDatosJugador(jugador, gano, intentosRestantes, miPersonajeSecreto.getNombre());
-//            }
         });
         
         JPanel rightTopPanel = new JPanel();
@@ -826,10 +817,11 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     gano = false; // ← El jugador local perdió (porque el oponente acertó)
                     areaPreguntas.append("Oponente (adivinó): Acertó \n\n");
                     cliente.enviarMensaje("¡Ganaste!");
-                    
+                    cliente.enviarObjeto("jugadorOponente", jugador);
+                    //aqui podriamos enviar el objeto para actualizar la informacion del oponente con mi informacion
                     mostrarPantallaAnimo();
                     registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
-                    actualizarDatosJugador(jugador, gano, 3-intentosRestantes, miPersonajeSecreto.getNombre());
+                    actualizarDatosJugador(jugador, gano, 3 - intentosRestantes , miPersonajeSecreto.getNombre());
                 } else {
                     cliente.enviarMensaje("mensaje:No");
                     areaPreguntas.append("Oponente (adivinó): No acertó \n\n");
@@ -844,23 +836,26 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 areaPreguntas.append("Oponente: Gasto sus 3 oportunidades\n");
                 mostrarPantallaFelicidades();
                 gano = true;
+                //aqui podriamos enviar el objeto para actualizar la informacion del oponente con mi informacion
                 registrarPartida(jugador.getNickname(), miPersonajeSecreto.getRutaImagen());
-                actualizarDatosJugador(jugador, gano, 3-intentosRestantes, miPersonajeSecreto.getNombre());
+                actualizarDatosJugador(jugador, gano, 3 - intentosRestantes , miPersonajeSecreto.getNombre());
                 return;
             }
-
+            
+            //los If es lo que se hace local lo que se recibe de mensaje y entonces se actua deacuerdo a ello
             if (!texto.equalsIgnoreCase("Sí") && !texto.equalsIgnoreCase("No") && !texto.equalsIgnoreCase("turnoFinalizado")) {
                 areaPreguntas.append("Oponente (pregunta): " + texto + "\n");
                 mostrarDialogoRespuesta(texto);
                 
             } else if (texto.equalsIgnoreCase("Sí")) {
                 areaPreguntas.append("Oponente (respuesta): Sí\n\n");
-
+                
                 // El jugador acertó, ganó
                 mostrarPantallaFelicidades();
-                gano = true;
+                cliente.enviarObjeto("jugadorOponente", jugador);
+                //aqui podriamos enviar el objeto para actualizar la informacion del oponente con mi informacion
                 registrarPartida(jugador.getNickname(), miPersonajeSecreto.getRutaImagen());
-                actualizarDatosJugador(jugador, gano, 3 - intentosRestantes, miPersonajeSecreto.getNombre());
+                actualizarDatosJugador(jugador, true , 3 - intentosRestantes , miPersonajeSecreto.getNombre());
 
             } else if (texto.equalsIgnoreCase("No")) {
                 areaPreguntas.append("Oponente (respuesta): No\n\n");
@@ -872,12 +867,39 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     areaPreguntas.append("Tú: Te acabaste tus 3 intentos\n");
                     mostrarPantallaAnimo();
                     cliente.enviarMensaje("¡Ganaste!"); // ← El oponente gana si tú fallaste el último intento
-                    gano = false;
+                    //aqui podriamos enviar el objeto para actualizar la informacion del oponente con mi informacion
+                    cliente.enviarObjeto("jugadorOponente", jugador);
                     registrarPartida(oponente, miPersonajeSecreto.getRutaImagen());
-                    actualizarDatosJugador(jugador, gano, 3, miPersonajeSecreto.getNombre());
+                    actualizarDatosJugador(jugador, false, 3 , miPersonajeSecreto.getNombre());
                 } else {
                     // Todavía hay intentos, sigue el juego
                     habilitarPregunta(false);
+                }
+            }
+        }));
+        
+        cliente.setOnMensajeObjeto("jugadorOponente", objeto -> SwingUtilities.invokeLater(() -> {
+            if (objeto instanceof Jugador oponenteRecibido) {
+            // Verifica si ya existe en la base de datos local
+            Jugador oponenteLocal = ConexionBD.buscarPorNombre(oponenteRecibido.getNickname());
+
+                if (oponenteLocal == null) {
+                    // No existe → lo insertamos tal cual
+                    boolean insertado = ConexionBD.insertarJugador(oponenteRecibido);
+                    if (insertado) {
+                        System.out.println("Se insertó el oponente en la base de datos local: " + oponenteRecibido.getNickname());
+                    } else {
+                        System.out.println("No se pudo insertar el oponente.");
+                    }
+                } else {
+                    // Ya existe → lo actualizamos con la nueva info
+                    oponenteRecibido.setId(oponenteLocal.getId()); // Asegúrate de mantener el ID correcto
+                    boolean actualizado = ConexionBD.actualizarJugador(oponenteRecibido, oponenteRecibido.getId());
+                    if (actualizado) {
+                        System.out.println("Se actualizó el oponente en la base de datos local: " + oponenteRecibido.getNickname());
+                    } else {
+                        System.out.println("No se pudo actualizar el oponente.");
+                    }
                 }
             }
         }));
@@ -1014,7 +1036,8 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         jugador.setJugadorVS(cliente.getNombreOponente());
         jugador.setFechaPartida(new java.sql.Date(System.currentTimeMillis()));
         jugador.setTiempo(Time.valueOf(String.format("00:%02d:%02d", crono / 60, crono % 60)));
-        jugador.setIntentos((intentos - 4) * -1);
+        jugador.setIntentos(intentos);
+
 
         if (gano) {
             jugador.setVictorias(jugador.getVictorias() + 1);

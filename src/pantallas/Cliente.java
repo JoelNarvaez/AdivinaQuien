@@ -2,6 +2,8 @@ package pantallas;
 
 import java.io.*;
 import java.net.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class Cliente {
@@ -15,6 +17,7 @@ public class Cliente {
     private Runnable onEspera;
     private Consumer<String> onMensaje;
     private String nombreOponente;
+    private final Map<String, Consumer<Object>> handlersObjeto = new HashMap<>();
 
 public String getNombreOponente() {
     return nombreOponente;
@@ -100,7 +103,16 @@ public void escucharMensajes(Runnable onStart, Runnable onTuTurno, Runnable onEs
                     System.out.println("Tu oponente se desconectó.");
                     // Aquí puedes cerrar el juego o mostrar una alerta
                 }
-
+                
+                else if (mensaje instanceof Object[] array && array.length == 2 && array[0] instanceof String etiqueta) {
+                    Object contenido = array[1];
+                    Consumer<Object> handler = handlersObjeto.get(etiqueta);
+                    if (handler != null) {
+                        handler.accept(contenido);
+                    } else {
+                        System.out.println("No se encontró handler para etiqueta: " + etiqueta);
+                    }
+                }
                 // Otros posibles mensajes
             }
         } catch (EOFException e) {
@@ -125,7 +137,23 @@ public void escucharMensajes(Runnable onStart, Runnable onTuTurno, Runnable onEs
             e.printStackTrace();
         }
     }
+    
+    public void setOnMensajeObjeto(String etiqueta, Consumer<Object> handler) {
+        handlersObjeto.put(etiqueta, handler);
+    }
 
+    public void enviarObjeto(String etiqueta, Object objeto) {
+        try {
+            if (out != null) {
+                out.writeObject(new Object[]{etiqueta, objeto});
+                out.flush();
+            }
+        } catch (IOException e) {
+            System.out.println("Error al enviar objeto etiquetado.");
+            e.printStackTrace();
+        }
+    }
+    
     public PersonajeDisney[] getPersonajesRecibidos() {
         return personajesRecibidos;
     }
