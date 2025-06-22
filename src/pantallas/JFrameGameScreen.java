@@ -1047,6 +1047,8 @@ public class JFrameGameScreen extends javax.swing.JFrame {
             jugador.setDerrotas(jugador.getDerrotas() + 1);
             jugador.setRanking(jugador.getRanking() - 50);
         }
+        
+        jugador.setPersonajeAdivinado(personajeGanador);
 
         boolean actualizado = ConexionBD.actualizarJugador(jugador, jugador.getId());
         if (!actualizado) {
@@ -1054,6 +1056,8 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         } else {
             System.out.println("Jugador actualizado correctamente.");
         }
+        
+        
     }
     
 
