@@ -823,7 +823,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     actualizarDatosJugador(jugador, gano, intentosRestantes, miPersonajeSecreto.getNombre());
                 } else {
                     cliente.enviarMensaje("mensaje:No");
-                    cliente.enviarMensaje("Oportunidad");
+                    cliente.enviarMensaje("¡Ánimo!");
                     areaPreguntas.append("Oponente (adivinó): No acertó \n\n");
                     System.out.println(miPersonajeSecreto);
                     habilitarPregunta(true);
@@ -841,7 +841,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 return;
             }
             
-            if (texto.equalsIgnoreCase("Oportunidad")) {
+            if (texto.equalsIgnoreCase("¡Ánimo!")) {
                 areaPreguntas.append("Tú: Gasto de oportunidad\n\n");
 
                 intentosRestantes--;
