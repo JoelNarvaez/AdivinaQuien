@@ -27,17 +27,10 @@ public class JFramePresentacion extends javax.swing.JFrame {
         this.instruccion = instruccion;
     }
 
-    
-    
-
     public void setCreditos(JFrameCreditos creditos) {
         this.creditos = creditos;
     }
 
-    
-    /**
-     * Creates new form JFramePortada
-     */
     public JFramePresentacion() {
         initComponents();
         configurarTeclaEnterParaPausarReanudarMusica();

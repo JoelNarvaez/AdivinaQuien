@@ -856,7 +856,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
 
                 if (!gano && paso==1) {
                     Jugador oponente = ConexionBD.buscarPorNombre(jugador1);
-                    actualizarDatosJugador(oponente, false, intentosUsados, personajeGanador, 1, oponente.getNickname()); //actualizo oponente
+                    actualizarDatosJugador(oponente, false, intentosUsados, personajeGanador, 1, jugador.getNickname()); //actualizo oponente
                     registrarPartida(jugador.getNickname(), getFormatoDeRuta(personajeGanador));
                     actualizarDatosJugador(jugador, true, 3 - intentosRestantes, personajeGanador, 2,""); //esto si lo puedo hacer porque se todos estos datos aqui
                 
@@ -913,7 +913,6 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                 if (intentosRestantes == 0) {
                     areaPreguntas.append("Tú: Te acabaste tus 3 intentos\n");
                     mostrarPantallaAnimo();
-
                     // Avisas al oponente que ganó:
                     cliente.enviarMensaje("¡Ganaste!"); 
 
@@ -1047,13 +1046,13 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         //JOptionPane.showMessageDialog(this, "¡Felicidades, Ganaste!", "Ganaste", JOptionPane.INFORMATION_MESSAGE);
         // Aquí puedes abrir una pantalla propia si tienes JFrameFelicidades
         new JFrameFelicitacion(jugador.getNickname()).setVisible(true);
-        
+        this.dispose();
     }
 
     private void mostrarPantallaAnimo() {
         //JOptionPane.showMessageDialog(this, "¡Ánimo! Lo Hiciste bien.", "Fin del juego", JOptionPane.INFORMATION_MESSAGE);
-        // Aquí también puedes redirigir o cerrar el juego si deseas
          new JFrameAnimo(jugador.getNickname()).setVisible(true);
+         this.dispose();
     }
 
     private void registrarPartida(String ganador, String personajeGanador) {

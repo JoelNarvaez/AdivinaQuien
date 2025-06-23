@@ -81,7 +81,6 @@ public class PersonajeDisney implements Serializable {
 
     };
 
-    // --- Si quieres HashMap directamente en la clase ---
     public static final java.util.Map<String, PersonajeDisney> MAPA;
     static {
         MAPA = new java.util.HashMap<>();
