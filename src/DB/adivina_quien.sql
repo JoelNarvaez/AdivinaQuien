@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jun 18, 2025 at 06:51 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 23-06-2025 a las 04:44:43
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `adivina_quien`
+-- Base de datos: `adivina_quien`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jugadores`
+-- Estructura de tabla para la tabla `jugadores`
 --
 
 CREATE TABLE `jugadores` (
@@ -43,21 +43,21 @@ CREATE TABLE `jugadores` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `jugadores`
+-- Volcado de datos para la tabla `jugadores`
 --
 
 INSERT INTO `jugadores` (`id`, `nombre_jugador`, `profile`, `victorias`, `derrotas`, `edad`, `personaje_adivinado`, `tiempo_juego`, `intentos`, `fecha_partida`, `jugador_vs`, `ranking`) VALUES
 (10, 'AnaLorena', '/Imagenes/profileIcons/mike.jpg', 0, 0, 22, NULL, NULL, 0, NULL, NULL, 0),
-(11, 'TaniaPaola', '/Imagenes/profileIcons/nemo.jpg', 0, 0, 19, NULL, NULL, 0, NULL, NULL, 0),
-(12, 'LorenzoAntonio', '/Imagenes/profileIcons/mcqueen.jpg', 0, 0, 20, NULL, NULL, 0, NULL, NULL, 0),
-(13, 'MarielVillalpando', '/Imagenes/profileIcons/walle.jpg', 0, 0, 23, NULL, NULL, 0, NULL, NULL, 0),
-(14, 'JoelNarvaez', '/Imagenes/profileIcons/enojo.jpg', 0, 0, 20, NULL, NULL, 0, NULL, NULL, 0),
-(15, 'Guest', '/Imagenes/profileIcons/lilo.png', 0, 0, 18, NULL, NULL, 0, NULL, NULL, 0);
+(11, 'TaniaPaola', '/Imagenes/profileIcons/nemo.jpg', 3, 1, 19, 'Ralph', '00:00:21', 0, '2025-06-22', 'AnaLorena', 100),
+(12, 'LorenzoAntonio', '/Imagenes/profileIcons/mcqueen.jpg', 0, 4, 20, 'Carl', '00:00:41', 3, '2025-06-22', 'TaniaPaola', -200),
+(13, 'MarielVillalpando', '/Imagenes/profileIcons/walle.jpg', 2, 1, 23, 'Rapunzel', '00:00:37', 1, '2025-06-22', 'TaniaPaola', 50),
+(14, 'JoelNarvaez', '/Imagenes/profileIcons/enojo.jpg', 0, 1, 20, 'Dash', '00:01:07', 3, '2025-06-22', 'Guest', -50),
+(15, 'Guest', '/Imagenes/profileIcons/lilo.png', 1, 0, 18, 'Dash', '00:01:07', 1, '2025-06-22', 'Guest', 50);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `partidas`
+-- Estructura de tabla para la tabla `partidas`
 --
 
 CREATE TABLE `partidas` (
@@ -71,19 +71,23 @@ CREATE TABLE `partidas` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `partidas`
+-- Volcado de datos para la tabla `partidas`
 --
 
 INSERT INTO `partidas` (`id`, `jugador1`, `jugador2`, `ganador`, `personaje_ganador`, `fecha`, `duracion`) VALUES
-(1, 'MarielVillalpando', 'JoelNarvaez', 'JoelNarvaez', '/Imagenes/Personajes/aladdin.png', '2025-06-17', '00:11:52'),
-(2, 'AnaLorena', 'TaniaPaola', 'AnaLorena', '/Imagenes/Personajes/carl.png', '2025-06-17', '00:24:52'),
-(3, 'JoelNarvaez', 'TaniaPaola', 'JoelNarvaez', '/Imagenes/Personajes/dash.png', '2025-06-17', '00:26:28'),
-(4, 'AnaLorena', 'JoelNarvaez', 'JoelNarvaez', '/Imagenes/Personajes/lilo.png', '2025-06-17', '00:09:42');
+(38, 'Guest', 'JoelNarvaez', 'JoelNarvaez', '/Imagenes/Personajes/bella.png', '2025-06-22', '00:03:44'),
+(39, 'LorenzoAntonio', 'TaniaPaola', 'TaniaPaola', '/Imagenes/Personajes/carl.png', '2025-06-22', '00:00:41'),
+(40, 'TaniaPaola', 'AnaLorena', 'TaniaPaola', '/Imagenes/Personajes/ralph.png', '2025-06-22', '00:00:21'),
+(41, 'LorenzoAntonio', 'JoelNarvaez', 'LorenzoAntonio', '/Imagenes/Personajes/carl.png', '2025-06-22', '00:00:46'),
+(42, 'AnaLorena', 'JoelNarvaez', 'JoelNarvaez', '/Imagenes/Personajes/bella.png', '2025-06-22', '00:02:46'),
+(43, 'Guest', 'TaniaPaola', 'TaniaPaola', '/Imagenes/Personajes/ralph.png', '2025-06-22', '00:01:46'),
+(44, 'MarielVillalpando', 'Guest', 'MarielVillalpando', '/Imagenes/Personajes/jasmine.png', '2025-06-22', '00:01:35'),
+(45, 'LorenzoAntonio', 'MarielVillalpando', 'LorenzoAntonio', '/Imagenes/Personajes/pocahontas.png', '2025-06-22', '00:01:21');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `preguntas_adivinaquien`
+-- Estructura de tabla para la tabla `preguntas_adivinaquien`
 --
 
 CREATE TABLE `preguntas_adivinaquien` (
@@ -94,7 +98,7 @@ CREATE TABLE `preguntas_adivinaquien` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `preguntas_adivinaquien`
+-- Volcado de datos para la tabla `preguntas_adivinaquien`
 --
 
 INSERT INTO `preguntas_adivinaquien` (`id`, `pregunta`, `activa`, `fecha_registro`) VALUES
@@ -120,46 +124,46 @@ INSERT INTO `preguntas_adivinaquien` (`id`, `pregunta`, `activa`, `fecha_registr
 (20, '¿Tiene pecas o marcas?', 1, '2025-06-12 17:00:49');
 
 --
--- Indexes for dumped tables
+-- Índices para tablas volcadas
 --
 
 --
--- Indexes for table `jugadores`
+-- Indices de la tabla `jugadores`
 --
 ALTER TABLE `jugadores`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `nombre_jugador` (`nombre_jugador`);
 
 --
--- Indexes for table `partidas`
+-- Indices de la tabla `partidas`
 --
 ALTER TABLE `partidas`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `preguntas_adivinaquien`
+-- Indices de la tabla `preguntas_adivinaquien`
 --
 ALTER TABLE `preguntas_adivinaquien`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
--- AUTO_INCREMENT for table `jugadores`
+-- AUTO_INCREMENT de la tabla `jugadores`
 --
 ALTER TABLE `jugadores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
--- AUTO_INCREMENT for table `partidas`
+-- AUTO_INCREMENT de la tabla `partidas`
 --
 ALTER TABLE `partidas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
--- AUTO_INCREMENT for table `preguntas_adivinaquien`
+-- AUTO_INCREMENT de la tabla `preguntas_adivinaquien`
 --
 ALTER TABLE `preguntas_adivinaquien`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
