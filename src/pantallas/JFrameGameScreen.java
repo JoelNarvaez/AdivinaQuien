@@ -845,45 +845,47 @@ public class JFrameGameScreen extends javax.swing.JFrame {
 
             if (texto.startsWith("Info:")) {
                 String[] datos = texto.split(":");
-                String jugador1 = datos[1];
-                String jugador2 = datos[2];
-                String ganador = datos[3];
+                String jugador1 = datos[1]; // quien perdió
+                String jugador2 = datos[2]; // quien ganó
+                String ganador = datos[3];  // nickname del ganador
                 String personajeGanador = datos[4];
                 int crono = Integer.parseInt(datos[5]);
                 int intentosUsados = Integer.parseInt(datos[6]);
                 boolean gano = Boolean.parseBoolean(datos[7]);
                 int paso = Integer.parseInt(datos[8]);
 
-                if (!gano && paso==1) {
-                    Jugador oponente = ConexionBD.buscarPorNombre(jugador1);
-                    actualizarDatosJugador(oponente, false, intentosUsados, personajeGanador, 1, jugador.getNickname()); //actualizo oponente
+                if (!gano && paso == 1) {
+                    Jugador oponente = ConexionBD.buscarPorNombre(jugador1); // Perdedor
+                    actualizarDatosJugador(oponente, false, intentosUsados, personajeGanador, 1, jugador2); // Oponente (perdedor) VS Ganador (jugador2)
+
                     registrarPartida(jugador.getNickname(), getFormatoDeRuta(personajeGanador));
-                    actualizarDatosJugador(jugador, true, 3 - intentosRestantes, personajeGanador, 2,""); //esto si lo puedo hacer porque se todos estos datos aqui
-                
+                    actualizarDatosJugador(jugador, true, 3 - intentosRestantes, personajeGanador, 2, cliente.getNombreOponente()); // Yo (ganador) VS el real oponente
+
                     // Enviar Info con los datos de la partida:
                     int intentosLocal = 3 - intentosRestantes;
                     String info = String.format("Info:%s:%s:%s:%s:%d:%d:%b:%d", 
-                        jugador1,//perdedor
-                        jugador2, //ganador 
-                        ganador, // El oponente ganó (Quien Gana)
-                        personajeGanador, //personaje secreto del ganador
-                        crono, //tiempo
-                        intentosLocal,//intentos del ganador
-                        false, // quien envia informacion perdio
-                        2 //paso 1 -> 2
+                        jugador1,   // perdedor
+                        jugador2,   // ganador 
+                        ganador,    // nickname del ganador
+                        personajeGanador,
+                        crono,
+                        intentosLocal, // intentos del ganador
+                        false,
+                        2
                     );
                     cliente.enviarMensaje(info);
                 }
+
                 // Paso 2: Ganador envió su Info, ahora registrar partida completo
-                if (!gano && paso==2) {                   
-                    Jugador oponente = ConexionBD.buscarPorNombre(jugador2);
-                    
+                if (!gano && paso == 2) {                   
+                    Jugador oponente = ConexionBD.buscarPorNombre(jugador2); // Ganador
+
                     Partida partida = new Partida();
-                    partida.setJugador1(jugador1); //Mi nombre
-                    partida.setJugador2(jugador2); // Nombre de mi oponente
-                    partida.setGanador(ganador); //quien gano
-                    partida.setPersonajeGanador(getFormatoDeRuta(personajeGanador));//y el personaje que se adivino
-                    partida.setFecha(new java.sql.Date(System.currentTimeMillis())); // <-- java.sql.Date
+                    partida.setJugador1(jugador1); // Perdedor
+                    partida.setJugador2(jugador2); // Ganador
+                    partida.setGanador(ganador);
+                    partida.setPersonajeGanador(getFormatoDeRuta(personajeGanador));
+                    partida.setFecha(new java.sql.Date(System.currentTimeMillis()));
 
                     int minutos = crono / 60;
                     int segundos = crono % 60;
@@ -891,12 +893,13 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     partida.setDuracion(duracion);
 
                     ConexionBD.insertarPartida(partida);
-                    actualizarDatosJugador(jugador, false, 3, personajeGanador , 2, "");
-                    actualizarDatosJugador(oponente, true, intentosUsados, personajeGanador, 1, jugador2);
+                    actualizarDatosJugador(jugador, false, 3, personajeGanador, 2, cliente.getNombreOponente()); // Yo (perdedor) VS el real oponente
+                    actualizarDatosJugador(oponente, true, intentosUsados, personajeGanador, 1, jugador1);       // Oponente (ganador) VS el real oponente
                 }
 
                 return;
             }
+
 
             if (texto.equalsIgnoreCase("¡Ganaste!")) {
                 areaPreguntas.append("Oponente: tu oponente perdió\n");
@@ -1074,10 +1077,8 @@ public class JFrameGameScreen extends javax.swing.JFrame {
     }
 
     private void actualizarDatosJugador(Jugador jugador, boolean gano, int intentos, String personajeGanador, int num, String nom) {
-        jugador.setJugadorVS(cliente.getNombreOponente());
-        if(num==1){
-            jugador.setJugadorVS(nom);
-        }
+
+        jugador.setJugadorVS(nom); // también usa el nombre recibido (ya corregiste el envío)
         jugador.setFechaPartida(new java.sql.Date(System.currentTimeMillis()));
         jugador.setTiempo(Time.valueOf(String.format("00:%02d:%02d", crono / 60, crono % 60)));
         jugador.setIntentos(intentos);
