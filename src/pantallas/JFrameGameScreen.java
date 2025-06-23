@@ -856,9 +856,9 @@ public class JFrameGameScreen extends javax.swing.JFrame {
 
                 if (!gano && paso==1) {
                     Jugador oponente = ConexionBD.buscarPorNombre(jugador1);
-                    actualizarDatosJugador(oponente, false, intentosUsados, personajeGanador, 1); //actualizo oponente
+                    actualizarDatosJugador(oponente, false, intentosUsados, personajeGanador, 1, oponente.getNickname()); //actualizo oponente
                     registrarPartida(jugador.getNickname(), getFormatoDeRuta(personajeGanador));
-                    actualizarDatosJugador(jugador, true, 3 - intentosRestantes, personajeGanador, 2); //esto si lo puedo hacer porque se todos estos datos aqui
+                    actualizarDatosJugador(jugador, true, 3 - intentosRestantes, personajeGanador, 2,""); //esto si lo puedo hacer porque se todos estos datos aqui
                 
                     // Enviar Info con los datos de la partida:
                     int intentosLocal = 3 - intentosRestantes;
@@ -891,8 +891,8 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                     partida.setDuracion(duracion);
 
                     ConexionBD.insertarPartida(partida);
-                    actualizarDatosJugador(jugador, false, 3, personajeGanador , 2);
-                    actualizarDatosJugador(oponente, true, intentosUsados, personajeGanador, 1);
+                    actualizarDatosJugador(jugador, false, 3, personajeGanador , 2, "");
+                    actualizarDatosJugador(oponente, true, intentosUsados, personajeGanador, 1, jugador2);
                 }
 
                 return;
@@ -905,7 +905,7 @@ public class JFrameGameScreen extends javax.swing.JFrame {
             }
             
             if (texto.equalsIgnoreCase("¡Ánimo!")) { //yo se que perdi
-                areaPreguntas.append("Tú: Gasto de oportunidad\n\n");
+                areaPreguntas.append("Tú: Gasto una oportunidad\n\n");
 
                 intentosRestantes--;
                 intentos.setText("Intentos restantes: " + intentosRestantes);
@@ -1074,12 +1074,10 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         ConexionBD.insertarPartida(partida);
     }
 
-    private void actualizarDatosJugador(Jugador jugador, boolean gano, int intentos, String personajeGanador, int num) {
+    private void actualizarDatosJugador(Jugador jugador, boolean gano, int intentos, String personajeGanador, int num, String nom) {
+        jugador.setJugadorVS(cliente.getNombreOponente());
         if(num==1){
-            jugador.setJugadorVS(cliente.getNombreOponente());
-        }
-        if(num==2){
-            jugador.setJugadorVS(this.getName());
+            jugador.setJugadorVS(nom);
         }
         jugador.setFechaPartida(new java.sql.Date(System.currentTimeMillis()));
         jugador.setTiempo(Time.valueOf(String.format("00:%02d:%02d", crono / 60, crono % 60)));
@@ -1102,7 +1100,6 @@ public class JFrameGameScreen extends javax.swing.JFrame {
         } else {
             System.out.println("Jugador actualizado correctamente.");
         }
-        
         
     }
     
