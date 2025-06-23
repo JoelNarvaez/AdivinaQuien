@@ -873,7 +873,6 @@ public class JFrameGameScreen extends javax.swing.JFrame {
                         2 //paso 1 -> 2
                     );
                     cliente.enviarMensaje(info);
-                    
                 }
                 // Paso 2: Ganador envió su Info, ahora registrar partida completo
                 if (!gano && paso==2) {                   
@@ -1077,10 +1076,10 @@ public class JFrameGameScreen extends javax.swing.JFrame {
 
     private void actualizarDatosJugador(Jugador jugador, boolean gano, int intentos, String personajeGanador, int num) {
         if(num==1){
-            jugador.setJugadorVS(jugador.getNickname());
+            jugador.setJugadorVS(cliente.getNombreOponente());
         }
         if(num==2){
-            jugador.setJugadorVS(oponente);
+            jugador.setJugadorVS(this.getName());
         }
         jugador.setFechaPartida(new java.sql.Date(System.currentTimeMillis()));
         jugador.setTiempo(Time.valueOf(String.format("00:%02d:%02d", crono / 60, crono % 60)));
